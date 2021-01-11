@@ -1,0 +1,77 @@
+[
+	"Live Radio",
+	[
+		[
+			"https://18213.live.streamtheworld.com/KPACFM.mp3",
+			"Texas Public Radio, KPAC",
+			"",
+			-1,
+			"HTML",
+			0,
+			"",
+			"2020-12-06T20:14:49.370Z",
+			"_zgmtfdtc3"
+		],
+		[
+			"https://live.wostreaming.net/direct/ppm-jazz24aac48-ibc1",
+			"Jazz24 - 48KAAC",
+			"",
+			-1,
+			"HTML",
+			1,
+			"",
+			"2020-12-06T20:14:49.370Z",
+			"_zgmtfdtc3"
+		],
+		[
+			"https://live.wostreaming.net/direct/ppm-jazz24mp3-ibc1",
+			"Jazz24 - 128KMP3",
+			"",
+			-1,
+			"HTML",
+			2,
+			"",
+			"2020-12-06T20:14:49.370Z",
+			"_zgmtfdtc3"
+		],
+		[
+			"https://live.wostreaming.net/direct/ppm-jazz24aac256-ibc1",
+			"Jazz24 - 256KAAC",
+			"",
+			-1,
+			"HTML",
+			3,
+			"",
+			"2020-12-06T20:14:49.370Z",
+			"_zgmtfdtc3"
+		],
+		[
+			"https://stream.wqxr.org/wqxr-web?nyprBrowserId=65b2c56d1e59740",
+			"New York Public Radio - WQXR",
+			"",
+			-1,
+			"HTML",
+			4,
+			"",
+			"2020-12-06T20:14:49.370Z",
+			"_zgmtfdtc3"
+		],
+		[
+			"https://media-ssl.musicradio.com/ClassicFM",
+			"Classic FM",
+			"",
+			-1,
+			"HTML",
+			5,
+			"",
+			"2020-12-06T20:14:49.370Z",
+			"_zgmtfdtc3"
+		]
+	],
+	"",
+	"",
+	"",
+	"track_num",
+	"2020-12-06T20:14:49.370Z",
+	"_zgmtfdtc3"
+]
