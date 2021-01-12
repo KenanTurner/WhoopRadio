@@ -199,7 +199,7 @@
 						<button onclick="menuValueIncrement('--sq-controls-mobile',-1);return false;">-</button>
 					</div>
 				  <input type="reset">
-				  <input onclick="submitSettingsForm()" class="fakesubmit" value="Submit">
+				  <button onclick="submitSettingsForm()" class="fakesubmit" value="Submit" type="button">Select</button>
 				</form>
 			</div>
 		</div>

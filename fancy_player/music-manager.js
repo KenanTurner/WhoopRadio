@@ -301,9 +301,9 @@ class musicManager {
 			case "HTML":
 			default:
 				this._htmlAudio.play();
-				this._getHTMLAudioDuration(this.currentlyPlaying['track']['src'], function (duration) {
+				/*this._getHTMLAudioDuration(this.currentlyPlaying['track']['src'], function (duration) {
 					self._setDuration(duration);
-				});
+				});*/
 				break;
 				
 		}
@@ -751,10 +751,13 @@ class musicManager {
 	 */
 	_getHTMLAudioDuration(url, next) {
 		var _player = new Audio(url);
+		//_player.muted = true;
 		_player.addEventListener("durationchange", function (e) {
 			if (this.duration!=Infinity) {
 			   var duration = this.duration
-			   _player.remove();
+			   //IOS had a problem with this
+			   _player.src = null;
+			   _player = null;
 				next(Math.ceil(duration));
 				next = function(){};
 			};
