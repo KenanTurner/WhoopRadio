@@ -301,9 +301,9 @@ class musicManager {
 			case "HTML":
 			default:
 				this._htmlAudio.play();
-				/*this._getHTMLAudioDuration(this.currentlyPlaying['track']['src'], function (duration) {
+				this._getHTMLAudioDuration(this.currentlyPlaying['track']['src'], function (duration) {
 					self._setDuration(duration);
-				});*/
+				});
 				break;
 				
 		}
@@ -754,7 +754,7 @@ class musicManager {
 		//_player.muted = true;
 		_player.addEventListener("durationchange", function (e) {
 			if (this.duration!=Infinity) {
-			   var duration = this.duration
+			   var duration = this.duration;
 			   //IOS had a problem with this
 			   _player.src = null;
 			   _player = null;
