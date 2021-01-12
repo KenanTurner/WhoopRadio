@@ -1,5 +1,5 @@
 <?php
-	$files = glob("music/*.json*");
+	$files = glob("../music/*.json*");
 	echo "[";
 	for ($i=0; $i<count($files); $i++){
         $myfile = fopen($files[$i], "r") or die("Unable to open file!");
