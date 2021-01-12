@@ -1,5 +1,12 @@
 <?php
-	$files = glob("../music/*.json*");
+	function findMusicDirectory($dir){
+		if(is_dir($dir)){
+			return $dir;
+		}
+		return findMusicDirectory('../'.$dir);
+	}
+	$dir = findMusicDirectory("music/");
+	$files = glob($dir."*.json*");
 	echo "[";
 	for ($i=0; $i<count($files); $i++){
         $myfile = fopen($files[$i], "r") or die("Unable to open file!");
