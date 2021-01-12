@@ -363,16 +363,21 @@ class musicManager {
 			case "BC":
 				//we need to load the url dynamically
 				if(!this.currentlyPlaying['track']['oldsrc']){
-					var tmp = this;
-					tmp.currentlyPlaying['track']['oldsrc'] = tmp.currentlyPlaying['track']['src'];
+					this.currentlyPlaying['track']['oldsrc'] = this.currentlyPlaying['track']['src'];
+					var tmp = this.currentlyPlaying['track'];
+					var self = this;
 					$.ajax({
 						url: 'loadBC.php',
 						type: 'POST',
 						data: {href:src},
 						success: function(data) {
 							var tracks = JSON.parse(data);
-							tmp.currentlyPlaying['track']['src'] = Object.values(tracks)[0];
-							tmp._setTrack();
+							tmp['src'] = Object.values(tracks)[0];
+							if(JSON.stringify(self.currentlyPlaying['track']) == JSON.stringify(tmp)){
+								self._setTrack();
+							}else{
+								console.log("Moving too fast");
+							}
 						}
 					});
 					this._publish(this._setTrack,this.currentlyPlaying);
@@ -751,11 +756,10 @@ class musicManager {
 	 */
 	_getHTMLAudioDuration(url, next) {
 		var _player = new Audio(url);
-		//_player.muted = true;
 		_player.addEventListener("durationchange", function (e) {
 			if (this.duration!=Infinity) {
-			   var duration = this.duration;
-			   //IOS had a problem with this
+			   var duration = this.duration
+			   //IOS had a problem with this before
 			   _player.src = null;
 			   _player = null;
 				next(Math.ceil(duration));
@@ -828,6 +832,15 @@ class musicManager {
 		var folderIndex = Math.floor(Math.random() * this.data.length);
 		var trackIndex = Math.floor(Math.random() * this.data[folderIndex].track_list.length);
 		return {'album':this.data[folderIndex],'track':this.data[folderIndex].track_list[trackIndex]};
+	}
+	
+	//TODO
+	_trackToAlbum(track){
+		let albumContainer = [];
+		this.data.forEach(function(album){
+			if(album.hasTrack(track)){albumContainer.push(album);}
+		});
+		return albumContainer;
 	}
 	
 	

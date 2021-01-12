@@ -5,13 +5,14 @@
 		<script type="text/javascript" src="cookies.js"></script>
 		<script type="text/javascript" src="framework.js"></script>
 		<script type="text/javascript" src="display.js"></script>
+		<script type="text/javascript" src="forms.js"></script>
 		<script type="text/javascript" src="fancy_player/music-manager.js"></script>
 		<link rel="stylesheet" href="style.css">
 	</head>
-	<body>	
+	<body>
 		<div class="album-header sticky" id="album-header">
 			<div class="sq">
-				<img class="sq-img" src="images/settings-white.png" onerror="this.onerror=null;this.src='images/error.png';">
+				<img class="sq-img" src="images/settings-white.png" onclick="setTimeout(showMenu, 10);" onerror="this.onerror=null;this.src='images/error.png';">
 			</div>
 			<div class="sq">
 				<img class="sq-img" id="volumeBtn" src="images/speaker-white.png" onerror="this.onerror=null;this.src='images/error.png';" onclick="if(mm.currentVol>0){mm.changeVolume(0,true);}else{mm.changeVolume(1,true);}">
@@ -78,6 +79,7 @@
 				<div class="track">
 					<div class="sq">
 						<img class="sq-img" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" onerror="this.onerror=null;this.src='images/error.png';">
+						<div class="blur-img"></div>
 					</div>
 					<div class="txt-box">
 						<div class="txt-line title">
@@ -110,7 +112,167 @@
 				</div>
 			</div>
 		</footer>
-		
+		<div class="menu-bg" id="settings-menu">
+			<div class="menu-content">
+				<form onreset="resetSettingsMenu();return true;" id="settings-form">
+					<!--
+					--bg-color-main: #121212;
+					--bg-color-header: #121212;
+					--bg-color-controls: #4a4a4a;
+					--highlight-color: #4a4a4a;
+					--txt-color-main: #ffffff;
+					--txt-color-alt: #d1d1d1;
+					--progress-color-main: #03cffc;
+					--progress-color-alt: #8a8a8a;
+					--sq-img-mobile: 10rem;
+					--sq-album-mobile: 42rem;
+					--sq-header-mobile: 10rem;
+					--sq-controls-mobile: 10rem;
+					--track-cols: 1;
+					-->
+					<div class="heading">
+						Color Scheme:
+					</div>
+					<div class="subheading">Background Color:</div>
+					<div class="color-picker-wrapper">
+						<input type="color" id="--bg-color-main" name="--bg-color-main" value="#121212" required>
+					</div>
+					<div class="subheading">Header Color:</div>
+					<div class="color-picker-wrapper">
+						<input type="color" id="--bg-color-header" name="--bg-color-header" value="#121212" required>
+					</div>
+					<div class="subheading">Controls Color:</div>
+					<div class="color-picker-wrapper">
+						<input type="color" id="--bg-color-controls" name="--bg-color-controls" value="#4a4a4a" required>
+					</div>
+					<div class="subheading">Highlight Color:</div>
+					<div class="color-picker-wrapper">
+						<input type="color" id="--highlight-color" name="--highlight-color" value="#4a4a4a" required>
+					</div>
+					<div class="subheading">Text Color:</div>
+					<div class="color-picker-wrapper">
+						<input type="color" id="--txt-color-main" name="--txt-color-main" value="#ffffff" required>
+					</div>
+					<div class="subheading">Text Color Alt:</div>
+					<div class="color-picker-wrapper">
+						<input type="color" id="--txt-color-alt" name="--txt-color-alt" value="#d1d1d1" required>
+					</div>
+					<div class="subheading">Progress Color:</div>
+					<div class="color-picker-wrapper">
+						<input type="color" id="--progress-color-main" name="--progress-color-main" value="#03cffc" required>
+					</div>
+					<div class="subheading">Progress Color Alt:</div>
+					<div class="color-picker-wrapper">
+						<input type="color" id="--progress-color-alt" name="--progress-color-alt" value="#8a8a8a" required>
+					</div>
+					<div class="heading">
+						Sizing:
+					</div>
+					<div class="subheading">Track Size:</div>
+					<div class="number-wrapper">
+						<input type="number" id="--sq-img-mobile" name="--sq-img-mobile" value="10" min="3" max="32" required>
+						<button onclick="menuValueIncrement('--sq-img-mobile',1);return false;">+</button>
+						<button onclick="menuValueIncrement('--sq-img-mobile',-1);return false;">-</button>
+					</div>
+					<div class="subheading">Album Size:</div>
+					<div class="number-wrapper">
+						<input type="number" id="--sq-album-mobile" name="--sq-album-mobile" value="42" min="12" max="64" required>
+						<button onclick="menuValueIncrement('--sq-album-mobile',1);return false;">+</button>
+						<button onclick="menuValueIncrement('--sq-album-mobile',-1);return false;">-</button>
+					</div>
+					<div class="subheading">Header Size:</div>
+					<div class="number-wrapper">
+						<input type="number" id="--sq-header-mobile" name="--sq-header-mobile" value="10" min="3" max="32" required>
+						<button onclick="menuValueIncrement('--sq-header-mobile',1);return false;">+</button>
+						<button onclick="menuValueIncrement('--sq-header-mobile',-1);return false;">-</button>
+					</div>
+					<div class="subheading">Progress Bar Size:</div>
+					<div class="number-wrapper">
+						<input type="number" id="--progress-bar-size" name="--progress-bar-size" value="23" min="6" max="64" required>
+						<button onclick="menuValueIncrement('--progress-bar-size',1);return false;">+</button>
+						<button onclick="menuValueIncrement('--progress-bar-size',-1);return false;">-</button>
+					</div>
+					<div class="subheading">Controls Size:</div>
+					<div class="number-wrapper">
+						<input type="number" id="--sq-controls-mobile" name="--sq-controls-mobile" value="10" min="3" max="32" required>
+						<button onclick="menuValueIncrement('--sq-controls-mobile',1);return false;">+</button>
+						<button onclick="menuValueIncrement('--sq-controls-mobile',-1);return false;">-</button>
+					</div>
+				  <input type="reset">
+				  <button onclick="submitSettingsForm()" class="fakesubmit" value="Submit" type="button">Submit</button>
+				</form>
+			</div>
+		</div>
+		<div class="menu-bg" id="upload-menu">
+			<div class="menu-content">
+				Here is the settings menu
+				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec odio metus. Donec dapibus condimentum magna et scelerisque. Nulla nisi nulla, gravida sed justo ut, pellentesque fermentum erat. Sed in faucibus nisl, in convallis tortor. Nullam vel vehicula ex. Nulla condimentum libero et velit congue, in elementum sem convallis. Quisque augue urna, ultricies id iaculis a, sollicitudin sit amet augue. Suspendisse non sollicitudin mauris. Fusce at tincidunt est, vitae vestibulum felis. Nunc iaculis nunc eget lectus feugiat lobortis. Aenean iaculis facilisis bibendum. Sed gravida felis eget ultrices commodo. Vestibulum elementum odio aliquam risus molestie, quis auctor orci lacinia. Etiam faucibus elementum ex quis feugiat.
+
+				Mauris blandit ligula metus, et varius lectus porttitor at. Maecenas malesuada tempor erat quis pellentesque. Suspendisse potenti. Cras euismod pharetra varius. In arcu metus, convallis id arcu et, tempor pharetra massa. Donec sagittis nulla leo, ac consequat velit blandit non. Aliquam non velit metus. Fusce non est consequat, sollicitudin sapien ac, blandit elit.
+
+				Sed in posuere risus, id dapibus enim. Aliquam vitae sodales enim. Pellentesque et sem at libero commodo ullamcorper. Aliquam in nisl dictum magna laoreet convallis. Nullam molestie egestas mi nec molestie. Donec interdum, lacus quis fringilla gravida, neque ligula interdum leo, ac pulvinar ligula leo et mi. Aenean porta tincidunt velit, nec sagittis urna luctus sit amet. Ut semper neque eget tempor iaculis. Morbi ante tortor, pharetra nec ex ac, faucibus elementum purus. Etiam tellus odio, dapibus vel dictum a, pulvinar in massa. In id magna volutpat, volutpat elit ut, aliquet enim. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce a nisl a diam fringilla volutpat. Aliquam elementum justo felis, et consequat mauris viverra id. Morbi eu tellus bibendum risus posuere scelerisque. Sed sed vehicula lectus.
+
+				Etiam interdum, est nec auctor vestibulum, tellus sapien tempus eros, in tincidunt mi massa at tellus. Vivamus in arcu at libero rhoncus malesuada in ut augue. Nam sit amet dui eleifend, finibus odio sed, tincidunt diam. Maecenas consectetur nisl nunc, vel volutpat felis malesuada vel. Aliquam faucibus porttitor interdum. Nullam vitae finibus nisi. Nulla at ligula tortor. Sed vitae vulputate mi. Proin dui eros, ultricies eu sapien eu, molestie imperdiet metus. Donec nec iaculis mi, nec hendrerit odio.
+
+				Quisque eget purus tincidunt, blandit felis et, ultricies neque. Aenean tempor metus in molestie tristique. Mauris auctor nunc quis augue blandit, vitae maximus nunc dictum. Mauris ac facilisis risus. Morbi vestibulum elit at elit viverra consequat. Fusce consequat eleifend neque. Mauris nec lacus urna. Curabitur viverra tortor fermentum, hendrerit enim eu, convallis massa. Nam fermentum sapien et lacus vehicula mollis. Nulla et semper nibh. Pellentesque interdum, neque quis venenatis rutrum, orci arcu imperdiet tellus, ac congue mauris ex vel nisi.
+			</div>
+		</div>
+		<div class="menu-bg" id="album-menu">
+			<div class="menu-content">
+				Here is the album menu
+				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec odio metus. Donec dapibus condimentum magna et scelerisque. Nulla nisi nulla, gravida sed justo ut, pellentesque fermentum erat. Sed in faucibus nisl, in convallis tortor. Nullam vel vehicula ex. Nulla condimentum libero et velit congue, in elementum sem convallis. Quisque augue urna, ultricies id iaculis a, sollicitudin sit amet augue. Suspendisse non sollicitudin mauris. Fusce at tincidunt est, vitae vestibulum felis. Nunc iaculis nunc eget lectus feugiat lobortis. Aenean iaculis facilisis bibendum. Sed gravida felis eget ultrices commodo. Vestibulum elementum odio aliquam risus molestie, quis auctor orci lacinia. Etiam faucibus elementum ex quis feugiat.
+
+				Mauris blandit ligula metus, et varius lectus porttitor at. Maecenas malesuada tempor erat quis pellentesque. Suspendisse potenti. Cras euismod pharetra varius. In arcu metus, convallis id arcu et, tempor pharetra massa. Donec sagittis nulla leo, ac consequat velit blandit non. Aliquam non velit metus. Fusce non est consequat, sollicitudin sapien ac, blandit elit.
+
+				Sed in posuere risus, id dapibus enim. Aliquam vitae sodales enim. Pellentesque et sem at libero commodo ullamcorper. Aliquam in nisl dictum magna laoreet convallis. Nullam molestie egestas mi nec molestie. Donec interdum, lacus quis fringilla gravida, neque ligula interdum leo, ac pulvinar ligula leo et mi. Aenean porta tincidunt velit, nec sagittis urna luctus sit amet. Ut semper neque eget tempor iaculis. Morbi ante tortor, pharetra nec ex ac, faucibus elementum purus. Etiam tellus odio, dapibus vel dictum a, pulvinar in massa. In id magna volutpat, volutpat elit ut, aliquet enim. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce a nisl a diam fringilla volutpat. Aliquam elementum justo felis, et consequat mauris viverra id. Morbi eu tellus bibendum risus posuere scelerisque. Sed sed vehicula lectus.
+
+				Etiam interdum, est nec auctor vestibulum, tellus sapien tempus eros, in tincidunt mi massa at tellus. Vivamus in arcu at libero rhoncus malesuada in ut augue. Nam sit amet dui eleifend, finibus odio sed, tincidunt diam. Maecenas consectetur nisl nunc, vel volutpat felis malesuada vel. Aliquam faucibus porttitor interdum. Nullam vitae finibus nisi. Nulla at ligula tortor. Sed vitae vulputate mi. Proin dui eros, ultricies eu sapien eu, molestie imperdiet metus. Donec nec iaculis mi, nec hendrerit odio.
+
+				Quisque eget purus tincidunt, blandit felis et, ultricies neque. Aenean tempor metus in molestie tristique. Mauris auctor nunc quis augue blandit, vitae maximus nunc dictum. Mauris ac facilisis risus. Morbi vestibulum elit at elit viverra consequat. Fusce consequat eleifend neque. Mauris nec lacus urna. Curabitur viverra tortor fermentum, hendrerit enim eu, convallis massa. Nam fermentum sapien et lacus vehicula mollis. Nulla et semper nibh. Pellentesque interdum, neque quis venenatis rutrum, orci arcu imperdiet tellus, ac congue mauris ex vel nisi.
+			</div>
+		</div>
+		<div class="menu-bg" id="track-menu">
+			<div class="menu-content">
+				<form onreset="resetTrackMenu();return true;" id="track-form">
+					<div class="heading">
+						Title:
+					</div>
+					<input type="text" id="track-title" name="title" required>
+					<div class="heading">
+						Source:
+					</div>
+					<input type="text" id="track-src" name="src" required>
+					<div class="heading">
+						Artist:
+					</div>
+					<input type="text" id="track-artist" name="artist">
+					<div class="heading">
+						Artwork URL:
+					</div>
+					<input type="text" id="track-artwork-url" name="artwork_url">
+					<div class="heading">
+						Filetype:
+					</div>
+					<select id="track-filetype" name="filetype">
+						<option value="">Default</option>
+						<option value="BC">Bandcamp</option>
+						<option value="SC">Soundcloud</option>
+						<option value="YT">Youtube</option>
+						<option value="HTML">mp3,mp4,wav,ogg,flac</option>
+					</select>
+					<div class="heading" style="grid-column: span 1;">
+						Track Number:
+					</div>
+					<div class="number-wrapper">
+						<input type="number" id="track-track-num" name="track_num" value="0" min="0" max="199" required>
+						<button onclick="menuValueIncrement('track-track-num',1);return false;">+</button>
+						<button onclick="menuValueIncrement('track-track-num',-1);return false;">-</button>
+					</div>
+				  <input type="reset">
+				  <input onclick="submitTrackForm(mm.currentlyPlaying.track)" class="fakesubmit" value="Submit">
+				</form>
+			</div>
+		</div>
 		<div style="display: none;"> <!-- to unhide, change display to block -->
 			<audio id="html-player" src="" preload="none" controls="true" preload="metadata"></audio> <!--html audio-->
 			<div id="yt-player"></div> <!--Youtube embed-->
@@ -118,8 +280,17 @@
 			  src="https://w.soundcloud.com/player/?url=;"> <!--Soundcloud embed-->
 			</iframe>
 			<script>
-				var tmpUsrPref = new UserPreferences([],[]);
-				var data = <?php include "getData.php";?>;
+				//load cookies here
+				var customSettings = getLocalStorage("customSettings");
+				if(!customSettings){
+					customSettings = new CustomSettings();
+					setLocalStorage("customSettings",customSettings,true);
+				}else{
+					customSettings = CustomSettings.fromJson(customSettings);
+				}
+				customSettings.applySettings();
+				var tmpUsrPref = new UserPreferences([],[],CustomSettings.fromJson(JSON.stringify(customSettings)));
+				var data = <?php echo file_get_contents("https://crusaderradio.net/getData.php");?>;
 				var tmpData = JSON.parse(JSON.stringify(data));
 				convertToFramework(data);
 				window.mm = new musicManager(data,tmpUsrPref,'html-player','sc-player','yt-player','fancy_player/SoundcloudApi.js','fancy_player/YoutubeApi.js');
@@ -138,11 +309,20 @@
 				mm.subscribe(mm.toggleShuffle,shuffleEvent);
 				mm.subscribe(mm.changeVolume,volumeEvent);
 				
-				// Sticky header
-				// When the user scrolls the page, execute adjustHeader
-				//window.onscroll = function() {adjustHeader()};
-				//adjustHeader();
-				
+				//keyboard controls
+				document.addEventListener('keyup', keyUp, false);
+				document.addEventListener('keydown', keyDown, false); //media controls
+				document.addEventListener("keydown", function(e) {
+					if(txtBoxHasFocus()){
+						return true;
+					}
+					// space and arrow keys
+					if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+						e.preventDefault();
+					}
+				}, false);
+				//showMenu("track-menu",mm.data[1].track_list[23]);
+				//loadTrackMenu();
 			</script>
 		</div>
 	</body>

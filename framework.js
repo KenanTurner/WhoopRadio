@@ -85,7 +85,7 @@ class Album{
 		obj[1].forEach(function(entry, index, theArray){
 			theArray[index] = Track.fromJson(JSON.stringify(entry))
 		});
-		return new Album(obj[0],obj[1],obj[2],obj[3],obj[4],obj[5],obj[6],obj[7]);
+		return new Album(...obj);
 	}
 	sort(key="track_num",reversed=false){
 		if(!this.track_list.length){return true};
@@ -229,6 +229,22 @@ class Album{
 			track.artist = artist;
 		});
 	}
+	hasTrack(track){
+		let index = containsObject(track,this.track_list);
+		if(index != -1){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	findTrack(track){
+		let index = containsObject(track,this.track_list);
+		if(index != -1){
+			return index;
+		}else{
+			return false;
+		}
+	}
 }
 class Track{
 	constructor(src,title,artist="",duration=-1,filetype="HTML",track_num=-1,artwork_url="",_upload_date=(new Date()).toJSON(),_user_id=getCookie("userId")){
@@ -254,7 +270,7 @@ class Track{
 	
 	static fromJson(json){
 		var obj = JSON.parse (json);
-		return new Track(obj[0],obj[1],obj[2],obj[3],obj[4],obj[5],obj[6],obj[7],obj[8]);
+		return new Track(...obj);
 	}
 	toHTML(album_title,album_artwork="images/default.png"){
 		let track = document.createElement("div");
@@ -335,7 +351,7 @@ class Track{
 	}
 }
 class UserPreferences{
-	constructor(liked_tracks,blocked_tracks){
+	constructor(liked_tracks,blocked_tracks,customSettings = new CustomSettings){
 		if(!Array.isArray(liked_tracks) || !Array.isArray(blocked_tracks)){
 			throw new Error('Invalid Constructor');
 		}
@@ -347,6 +363,7 @@ class UserPreferences{
 		for (const element of blocked_tracks) {
 		  this.blocked_tracks.addTrack(element);
 		}
+		this.customSettings = CustomSettings.fromJson(JSON.stringify(customSettings));
 	}
 	//TODO update methods?
 	addLikedTrack(track){
@@ -400,11 +417,11 @@ class UserPreferences{
 		return (containsObject(track,this.blocked_tracks.track_list) != -1);
 	}
 	toJSON(){
-		return [JSON.parse(JSON.stringify(this.liked_tracks)),JSON.parse(JSON.stringify(this.blocked_tracks))];
+		return [JSON.parse(JSON.stringify(this.liked_tracks)),JSON.parse(JSON.stringify(this.blocked_tracks)),this.customSettings];
 	}
 	static fromJson(json){
 		var obj = JSON.parse(json);
-		return new UserPreferences(obj[0],obj[1]);
+		return new UserPreferences(obj[0],obj[1],obj[2]);
 	}
 }
 function containsObject(obj, list) {
