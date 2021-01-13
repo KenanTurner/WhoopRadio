@@ -7,6 +7,7 @@
 		<script type="text/javascript" src="display.js"></script>
 		<script type="text/javascript" src="forms.js"></script>
 		<script type="text/javascript" src="fancy_player/music-manager.js"></script>
+		<script type="text/javascript" src="upload.js"></script>
 		<link rel="stylesheet" href="style.css">
 	</head>
 	<body>
@@ -18,7 +19,7 @@
 				<img class="sq-img" id="volumeBtn" src="images/speaker-white.png" onerror="this.onerror=null;this.src='images/error.png';" onclick="if(mm.currentVol>0){mm.changeVolume(0,true);}else{mm.changeVolume(1,true);}">
 			</div>
 			<div class="sq">
-				<img class="sq-img" src="images/create-white.png" onerror="this.onerror=null;this.src='images/error.png';">
+				<img class="sq-img" onclick="setTimeout(function(){showMenu('upload-menu')}, 10);" src="images/create-white.png" onerror="this.onerror=null;this.src='images/error.png';">
 			</div>
 			<div class="sq">
 				<img class="sq-img" src="images/help-white.png" onerror="this.onerror=null;this.src='images/error.png';">
@@ -205,16 +206,45 @@
 		</div>
 		<div class="menu-bg" id="upload-menu">
 			<div class="menu-content">
-				Here is the settings menu
-				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec odio metus. Donec dapibus condimentum magna et scelerisque. Nulla nisi nulla, gravida sed justo ut, pellentesque fermentum erat. Sed in faucibus nisl, in convallis tortor. Nullam vel vehicula ex. Nulla condimentum libero et velit congue, in elementum sem convallis. Quisque augue urna, ultricies id iaculis a, sollicitudin sit amet augue. Suspendisse non sollicitudin mauris. Fusce at tincidunt est, vitae vestibulum felis. Nunc iaculis nunc eget lectus feugiat lobortis. Aenean iaculis facilisis bibendum. Sed gravida felis eget ultrices commodo. Vestibulum elementum odio aliquam risus molestie, quis auctor orci lacinia. Etiam faucibus elementum ex quis feugiat.
-
-				Mauris blandit ligula metus, et varius lectus porttitor at. Maecenas malesuada tempor erat quis pellentesque. Suspendisse potenti. Cras euismod pharetra varius. In arcu metus, convallis id arcu et, tempor pharetra massa. Donec sagittis nulla leo, ac consequat velit blandit non. Aliquam non velit metus. Fusce non est consequat, sollicitudin sapien ac, blandit elit.
-
-				Sed in posuere risus, id dapibus enim. Aliquam vitae sodales enim. Pellentesque et sem at libero commodo ullamcorper. Aliquam in nisl dictum magna laoreet convallis. Nullam molestie egestas mi nec molestie. Donec interdum, lacus quis fringilla gravida, neque ligula interdum leo, ac pulvinar ligula leo et mi. Aenean porta tincidunt velit, nec sagittis urna luctus sit amet. Ut semper neque eget tempor iaculis. Morbi ante tortor, pharetra nec ex ac, faucibus elementum purus. Etiam tellus odio, dapibus vel dictum a, pulvinar in massa. In id magna volutpat, volutpat elit ut, aliquet enim. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce a nisl a diam fringilla volutpat. Aliquam elementum justo felis, et consequat mauris viverra id. Morbi eu tellus bibendum risus posuere scelerisque. Sed sed vehicula lectus.
-
-				Etiam interdum, est nec auctor vestibulum, tellus sapien tempus eros, in tincidunt mi massa at tellus. Vivamus in arcu at libero rhoncus malesuada in ut augue. Nam sit amet dui eleifend, finibus odio sed, tincidunt diam. Maecenas consectetur nisl nunc, vel volutpat felis malesuada vel. Aliquam faucibus porttitor interdum. Nullam vitae finibus nisi. Nulla at ligula tortor. Sed vitae vulputate mi. Proin dui eros, ultricies eu sapien eu, molestie imperdiet metus. Donec nec iaculis mi, nec hendrerit odio.
-
-				Quisque eget purus tincidunt, blandit felis et, ultricies neque. Aenean tempor metus in molestie tristique. Mauris auctor nunc quis augue blandit, vitae maximus nunc dictum. Mauris ac facilisis risus. Morbi vestibulum elit at elit viverra consequat. Fusce consequat eleifend neque. Mauris nec lacus urna. Curabitur viverra tortor fermentum, hendrerit enim eu, convallis massa. Nam fermentum sapien et lacus vehicula mollis. Nulla et semper nibh. Pellentesque interdum, neque quis venenatis rutrum, orci arcu imperdiet tellus, ac congue mauris ex vel nisi.
+				<form>
+					<button class="heading" onclick="hideMenu();showMenu('upload-track-menu');" type="button">Upload Track</button>
+					<button class="heading" onclick="hideMenu();showMenu('upload-album-menu');" type="button">Upload Album</button>
+				</form>
+			</div>
+		</div>
+		<div class="menu-bg" id="upload-track-menu">
+			<div class="menu-content">
+				<form id="upload-track-form">
+					<div class="heading">
+						Source:
+					</div>
+					<input type="text" id="track-src" name="src" required>
+					<div class="heading">
+						Filetype:
+					</div>
+					<select id="upload-track-filetype" name="filetype">
+						<option value="">Default</option>
+						<option value="BC">Bandcamp</option>
+						<option value="SC">Soundcloud</option>
+						<option value="YT">Youtube</option>
+						<option value="HTML">mp3,mp4,wav,ogg,flac</option>
+					</select>
+					<div class="heading">
+						Album:
+					</div>
+					<select id="upload-track-album" name="album">
+						<option value="new_album">New Album</option>
+					</select>
+					<button onclick="uploadNewTrack()" class="fakesubmit" value="Submit" type="button">Submit</button>
+				</form>
+			</div>
+		</div>
+		<div class="menu-bg" id="upload-album-menu">
+			<div class="menu-content">
+				<form onreset="resetUploadMenu();return true;" id="track-form">
+					<button onclick="" value="Submit" type="button">Upload EE</button>
+					<button onclick="" value="Submit" type="button">Upload Album</button>
+				</form>
 			</div>
 		</div>
 		<div class="menu-bg" id="album-menu">
@@ -269,7 +299,7 @@
 						<button onclick="menuValueIncrement('track-track-num',-1);return false;">-</button>
 					</div>
 				  <input type="reset">
-				  <input onclick="submitTrackForm(mm.currentlyPlaying.track)" class="fakesubmit" value="Submit">
+				  <button onclick="submitTrackForm(mm.currentlyPlaying.track)" class="fakesubmit" value="Submit" type="button">Submit</button>
 				</form>
 			</div>
 		</div>
@@ -323,7 +353,16 @@
 				}, false);
 				//showMenu("track-menu",mm.data[1].track_list[23]);
 				//loadTrackMenu();
+				//showMenu("upload-menu");
 				
+			</script>
+			<div id="tmp_player"></div> <!--Youtube embed-->
+			<script>
+				// 2. This code loads the IFrame Player API code asynchronously.
+				musicManager.loadScript("fancy_player/YoutubeApi.js", function() {
+					console.log("Soutube Api has been loaded");
+					createUploadYT();
+				});
 			</script>
 		</div>
 	</body>
