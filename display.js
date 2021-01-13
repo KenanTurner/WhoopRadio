@@ -165,14 +165,32 @@ function updateCurrentlyPlaying(){
 		trackElement.children[1].children[1].innerText = album.title;
 	}
 	trackElement.children[2].children[0].src = "images/heart-white.png";
-	let oldElement = document.getElementById("currently-playing-img");
+	let oldElement = document.getElementById("currently-playing-track");
+	var fragment = new DocumentFragment();
 	if(oldElement){
-		oldElement.src = oldElement.dataset.lazysrc;
+		oldElement.children[0].children[0].src = oldElement.children[0].children[0].dataset.lazysrc;
 		oldElement.id = "";
+		oldElement.classList.remove("playing");
+		oldElement.children[0].style.position = "";
+		if(oldElement.children[0].childElementCount > 1){
+			fragment.appendChild(oldElement.children[0].children[1]);
+		}
 	}
 	let element = trackToDivElement(album,track);
-	element.children[0].children[0].id = "currently-playing-img";
-	element.children[0].children[0].src = "images/playing.gif";
+	element.id = "currently-playing-track";
+	element.children[0].children[0].src = "images/stopped.png";
+	element.classList.add("playing");
+	if(mm._isPlaying){
+		element.children[0].children[0].src = "images/playing.gif";
+	}
+	if(!fragment.childElementCount){
+		let div = document.createElement('div');
+		div.classList.add('blur-img');
+		fragment.appendChild(div);
+	}
+	fragment.children[0].style.backgroundImage = "url("+ element.children[0].children[0].dataset.lazysrc+")";
+	element.children[0].style.position = "relative";
+	element.children[0].appendChild(fragment);
 }
 
 //https://stackoverflow.com/a/11486026
@@ -472,12 +490,15 @@ function loadEventListeners(){
 				//console.log(divElementToTrack(e.target));
 				alert("Liked");
 			});
+			
 		}
 		trackList.addEventListener('contextmenu', function(e) {
 			//alert("You've tried to open context menu"); //here you draw your own menu
 			e.preventDefault();
-			console.log(divElementToTrack(e.target));
-			alert("Options");
+			let track = divElementToTrack(e.target);
+			if(track){
+				showMenu("track-menu",track);
+			}
 		}, false);
 		
 	}
@@ -539,10 +560,13 @@ function loadEventListeners(){
 
 function playPauseEvent(){
 	let btn = document.getElementById("playPauseBtn");
+	let element = trackToDivElement(mm.currentlyPlaying.album,mm.currentlyPlaying.track);
 	if(mm._isPlaying){
 		btn.src = "images/pause-white.png";
+		element.children[0].children[0].src = "images/playing.gif";
 	}else{
 		btn.src = "images/play-white.png";
+		element.children[0].children[0].src = "images/stopped.png";
 	}
 }
 
@@ -577,26 +601,16 @@ function volumeEvent(){
 	}
 }
 
-
-function adjustHeader() {
-	let album_header = document.getElementById("album-header");
-	let track_header = document.getElementById("track-header");
-	let albumHeaderOffset = album_header.offsetTop;
-	let trackHeaderOffset = track_header.offsetTop;
-	let headerHeight = album_header.offsetHeight;
-	let content = document.getElementById("content");
-	/*if (window.pageYOffset > headerOffset) {
-		album_header.classList.add("sticky");
-		content.style =  "padding-top: "+headerHeight+"px";
-	} else {
-		album_header.classList.remove("sticky");
-		content.style =  "padding-top: 0px";
-	}*/
-	album_header.classList.add("sticky");
-	track_header.classList.add("sticky");
-	content.style =  "padding-top: "+headerHeight+"px";
+function setRootVariable(variable,value){
+	document.documentElement.style.setProperty(variable, value);
+}
+function getRootVariable(variable){
+	return getComputedStyle(document.body).getPropertyValue(variable).trim();
 }
 
+function scrollIntoViewHeader(element,id="track-header"){
+	window.scroll(0, element.offsetTop - getHeaderHeight(id));
+}
 
 function getHeaderHeight(id){
 	let header = document.getElementById(id);
@@ -604,24 +618,103 @@ function getHeaderHeight(id){
 	return headerHeight;
 }
 
-function changeGridDensity(cols=2,size=26){
-	let albumContainer = document.getElementsByClassName("album-container")[0];
-	let root = document.documentElement;
-	root.style.setProperty('--sq-album-mobile', size + "em");
-	albumContainer.style.gridTemplateColumns = "repeat("+cols+", var(--sq-album-mobile))";
-}
-function toggleGridDensity(){
-	let albumContainer = document.getElementsByClassName("album-container")[0];
-	if(albumContainer.style.gridTemplateColumns.charAt(7)>=4){
-		changeGridDensity();
-	}else{
-		changeGridDensity(4,13);
+function txtBoxHasFocus(){
+	if (document.activeElement.nodeName == 'TEXTAREA' || document.activeElement.nodeName == 'INPUT') {
+		return true;
 	}
+	return false;
 }
 
-function scrollIntoViewHeader(element,id="track-header"){
-	window.scroll(0, element.offsetTop - getHeaderHeight(id));
-	//window.scroll(0, trackToDivElement(mm.currentlyPlaying.album,mm.currentlyPlaying.track).offsetTop - getHeaderOffset());
+function keyUp(event){
+	if(txtBoxHasFocus()){
+		return;
+	}
+	if(event.which == 32 || event.which == 179) { //play pause: space
+		mm.togglePlay();
+	}
+	if(event.which == 77) { //mute: m
+		if(mm.currentVol>0){
+			mm.changeVolume(0,true);
+		}else{
+			mm.changeVolume(1,true);
+		}
+	}
+	if(event.which == 39) { //rewind forward: ->
+		mm.fastForward(10);
+	}
+	if(event.which == 37) { //rewind forward: <-
+		mm.fastForward(-10);
+	}
+	if(event.which == 38) { //vol up down: ^
+		mm.changeVolume(0.1);
+	}
+	if(event.which == 40) { //vol up down: Down
+		mm.changeVolume(-0.1);
+	}
+	if(event.which == 76) { //loop: L
+		mm.toggleLoop();
+	}
+	if(event.which == 188 || event.which == 177) { //skip track: <
+		mm.findNextTrack(-1);
+	}
+	if(event.which == 190 || event.which == 176) { //skip track: >
+		mm.findNextTrack(1);
+	}
+	if(event.which == 219) { //skip folder: [
+		mm.findNextFolder(-1);
+	}
+	if(event.which == 221) { //skip folder: ]
+		mm.findNextFolder(1);
+	}
+	if(event.which == 83) { //shuffle: S
+		mm.toggleShuffle();
+	}
+	if(event.which == 65) { //shuffle all: A
+		mm.toggleShuffleAll();
+	}
+	/*if(event.which == 85) { //Upvote song
+		mm.setTrackType('liked');
+	}
+	if(event.which == 88) { //X to xterminate song
+		mm.setTrackType('skipped',force=true);
+	}
+	if(event.which == 69) { //E to expand all
+		expandAll();
+	}
+	if(event.which == 67) { //C to collapse all
+		collapseAll();
+	}
+	if(event.which == 80) { //p to play liked
+		mm.toggleLikedTracks();
+	}
+	*/
+	if(event.which == 96) { //Zero
+		mm.fastForward(-1*mm.currentTime);
+	}
+}
+//var mediaPause = false;
+function keyDown(event){ //media controls
+	if(event.which == 179) { //play pause: space
+		mm.togglePlay();
+	}
+	/*if(event.which == 39) { //rewind forward: ->
+		mm.fastForward(10);
+	}
+	if(event.which == 37) { //rewind forward: <-
+		mm.fastForward(-10);
+	}
+	if(event.which == 38) { //vol up down: ^
+		mm.changeVolume(0.1);
+	}
+	if(event.which == 40) { //vol up down: Down
+		mm.changeVolume(-0.1);
+	}*/
+	if(event.which == 177) { //skip track: <
+		mm.findNextTrack(-1);
+	}
+	if(event.which == 176) { //skip track: >
+		mm.findNextTrack(1);
+	}
 }
 
 class Timer{
@@ -646,6 +739,7 @@ class Timer{
 	}
 	
 }
+
 
 
 
