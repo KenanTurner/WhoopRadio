@@ -181,7 +181,8 @@ body {
     position: absolute;
     z-index: 0;   
     object-fit: cover;
-    background-size: cover;
+    background-size: contain;
+    background-repeat: no-repeat;
     border-radius: calc(var(--sq-img-mobile)*0.12);
     margin: 5%;
 }
