@@ -25,9 +25,19 @@ function onPlayerStateChange(event,callback = printThing) {
 		callback(track);
 	}
 }
-function getYTPlaylist(id){
+function DEPRECIATEDgetYTPlaylist(id){
 	uploadYT.setVolume(0);
 	uploadYT.cuePlaylist({listType:'playlist',list: id,index:0,startSeconds:0});
+}
+function getYTPlaylist(id,folder,callback = printThing){
+	ajax('getYTPlaylist.php','POST',{'playlist_id':id,'folder':folder},function(response){
+		let tmp = JSON.parse(response);
+		tmp[1].forEach(function(track,index,array){
+			array[index] = Track.fromJson(track);
+		});
+		tmp = Album.fromJson(JSON.stringify(tmp));
+		callback(tmp);
+	});
 }
 function getYTVideo(id){
 	uploadYT.setVolume(0);
@@ -53,6 +63,56 @@ function ajax(url, type, data, callback){
 		success: function(data) {
 			callback(data);
 		}
+	});
+}
+
+function downloadObj(obj) {
+	var hiddenElement = document.createElement('a');
+	hiddenElement.href = 'data:attachment/text,' + encodeURI(JSON.stringify(obj,null,'\t'));
+	hiddenElement.target = '_blank';
+	hiddenElement.download = 'data.json';
+	hiddenElement.click();
+}
+function downloadMinObj(obj) {
+	var hiddenElement = document.createElement('a');
+	hiddenElement.href = 'data:attachment/text,' + encodeURI(JSON.stringify(obj));
+	hiddenElement.target = '_blank';
+	hiddenElement.download = 'data.json';
+	hiddenElement.click();
+}
+function downloadAllAlbums() {
+	var hiddenElement = document.createElement('a');
+	hiddenElement.href = 'getData.php';
+	hiddenElement.target = '_blank';
+	hiddenElement.download = 'data.json';
+	hiddenElement.click();
+}
+function quickUpdate(album,artworkUrl="",artist="",genre=""){
+    album.artwork_url = artworkUrl;
+    album.setArtists(artist);
+    album.genre = genre;
+    console.log(album);
+    uploadAlbum(album);
+}
+function uploadAlbum(album){
+	//console.log(album);
+	let tmpAlbum = Album.fromJson(JSON.stringify(album));
+	tmpAlbum.sort();
+	$.ajax({
+		url: 'setData.php',
+		type: 'POST',
+		data:({
+			filename: album["title"],
+			data: JSON.stringify(tmpAlbum,null,'\t')
+		}),
+		success:function(results) {
+			console.log(results);
+		}
+	});
+}
+function uploadAllAlbums(){
+	mm.data.forEach(function(album){
+		uploadAlbum(album);
 	});
 }
 

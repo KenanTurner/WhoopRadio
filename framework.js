@@ -434,55 +434,6 @@ function containsObject(obj, list) {
 
     return -1;
 }
-function downloadObj(obj) {
-	var hiddenElement = document.createElement('a');
-	hiddenElement.href = 'data:attachment/text,' + encodeURI(JSON.stringify(obj,null,'\t'));
-	hiddenElement.target = '_blank';
-	hiddenElement.download = 'data.json';
-	hiddenElement.click();
-}
-function downloadMinObj(obj) {
-	var hiddenElement = document.createElement('a');
-	hiddenElement.href = 'data:attachment/text,' + encodeURI(JSON.stringify(obj));
-	hiddenElement.target = '_blank';
-	hiddenElement.download = 'data.json';
-	hiddenElement.click();
-}
-function downloadAllAlbums() {
-	var hiddenElement = document.createElement('a');
-	hiddenElement.href = 'getData.php';
-	hiddenElement.target = '_blank';
-	hiddenElement.download = 'data.json';
-	hiddenElement.click();
-}
-function quickUpdate(album,artworkUrl="",artist="",genre=""){
-    album.artwork_url = artworkUrl;
-    album.setArtists(artist);
-    album.genre = genre;
-    console.log(album);
-    uploadAlbum(album);
-}
-function uploadAlbum(album){
-	//console.log(album);
-	let tmpAlbum = Album.fromJson(JSON.stringify(album));
-	tmpAlbum.sort();
-	$.ajax({
-		url: 'setData.php',
-		type: 'POST',
-		data:({
-			filename: album["title"],
-			data: JSON.stringify(tmpAlbum,null,'\t')
-		}),
-		success:function(results) {
-			console.log(results);
-		}
-	});
-}
-function uploadAllAlbums(){
-	mm.data.forEach(function(album){
-		uploadAlbum(album);
-	});
-}
 function convertToFramework(data){
 	data.forEach(function(part, index, theArray) {
 		theArray[index] = Album.fromJson(JSON.stringify(theArray[index]));
