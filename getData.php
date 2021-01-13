@@ -1,9 +1,9 @@
 <?php
-	function findMusicDirectory($dir){
+	function findDirectory($dir){
 		if(is_dir($dir)){
 			return $dir;
 		}
-		return findMusicDirectory('../'.$dir);
+		return findDirectory('../'.$dir);
 	}
 	$dir = findMusicDirectory("music/");
 	$files = glob($dir."*.json*");
