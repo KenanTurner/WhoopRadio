@@ -571,6 +571,9 @@ class musicManager {
 		this._SCAudio.pause();
 		this._setDuration(0);
 		this._updateTime(0);
+		this._SCAudio.load("&auto_play=false&buying=false&liking=false&download=false&sharing=false&show_artwork=false&show_comments=false&show_playcount=false&show_user=false&hide_related=false&visual=false&start_track=0&callback=true");
+		this._YTAudio.cueVideoById("", 0);
+		this._htmlAudio.src = "";
 	}
 	
 	/**
