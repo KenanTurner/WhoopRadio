@@ -9,6 +9,9 @@ function showMenu(id="settings-menu",...args){
 	if(id=="track-menu"){
 		loadTrackMenu(...args);
 	}
+	if(id=="upload-track-menu"){
+		loadUploadTrackMenu(...args);
+	}
 }
 function loadSettingsMenu(settings = new CustomSettings()){
 	let tags = document.getElementsByTagName("input");
@@ -62,6 +65,69 @@ function loadTrackMenu(track = Track.fromJson(document.getElementById("track-for
 	}
 	let form = document.getElementById("track-form")
 	form.dataset.track = JSON.stringify(track);
+}
+
+function loadUploadTrackMenu(){
+	let albumNames = [];
+	var fragment = new DocumentFragment();
+	mm.data.forEach(function(album){
+		albumNames.push(album.title);
+		let div = document.createElement('option');
+		div.value = album.title;
+		div.innerText = album.title;;
+		fragment.appendChild(div);
+	});
+	//console.log(fragment);
+	let select = document.getElementById("upload-track-album");
+	select.appendChild(fragment);
+	
+}
+function uploadNewTrack(){
+	if(!verifyForm("upload-track-form","All entries must be filled out","filetype")){
+		return;
+	}
+	let form = document.getElementById("upload-track-form");
+	let formData = new FormData(form);
+	let track = new Track("LONGANDRANDOMSTRING","LONGANDRANDOMSTRING");
+	for(var pair of formData.entries()) {
+		console.log(pair[0]+ ', '+ pair[1]);
+		if(pair[0] == "filetype" && !pair[1]){
+			pair[1] = musicManager.getFiletype(track.src);
+		}
+		if(pair[0] == "src" && (pair[1]!=track.src)){
+			track.duration = -1;
+		}
+		track[pair[0]] = pair[1];
+	}
+	let albumTitle = track.album;
+	if(albumTitle == "new_album"){
+		albumTitle = promptValue("Please enter the album title");
+	}
+	track = Track.fromJson(JSON.stringify(track));
+	
+	if(track.src == "LONGANDRANDOMSTRING"){
+		track.src = promptValue("Please enter the src. This really shouldn't happen.");
+	}
+	if(track.title == "LONGANDRANDOMSTRING" && track.filetype != "HTML"){
+		track.title = promptValue("Please enter the track title");
+	}
+	/*ajax({
+        url: 'http://example.com/catalog/create/' + targetNode.id + '?name=' + encode(to.inp[0].value),
+        success: function (result) {
+            if (result.isOk == false) alert(result.message);
+        },
+        async: false
+    });*/
+
+	
+	
+	console.log(track,albumTitle);
+	
+}
+function promptValue(message){
+	let value = prompt(message);
+	if(!value){return promptValue(message)}
+	return value;
 }
 function hideMenu(){
 	let menus = document.getElementsByClassName("menu-bg");
@@ -118,7 +184,6 @@ function menuValueIncrement(id,step){
 }
 
 function verifyForm(id="settings-form",message="All entries must be filled out",...args){
-	console.log(args);
 	let form = document.getElementById(id);
 	let formData = new FormData(form);
 	for(var pair of formData.entries()) {

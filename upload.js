@@ -1,14 +1,20 @@
-function printThing(thing){console.log(thing);}
-function onPlayerStateChange(event,callback = printThing) {
-	console.log("event: ",event);
+function printThing(...thing){console.log(...thing);}
+function doNothing(evt){}
+var onPlayerStateChange = printThing;
+var onPlayerStateFail = printThing;
+function handleYTEvent(event,callback = printThing,album = null){
+	console.log(event);
 	if(event.data == 5){ //loaded
 		var data = uploadYT.getPlaylist();
 		if(data){
 			if(data.length==200){
 				console.log("we got a problem");
 			}
-			console.log(data);
-			uploadYT.playVideo();
+			console.log("Are you sure you want to upload a YT playlist this way?");
+			//console.log("YT Playlist",data);
+			onPlayerStateChange = doNothing;
+			callback(data);
+			//getYTVideo(data[0],handleYTEvent);
 			//upload here prob
 		}else{
 			uploadYT.playVideo();
@@ -17,32 +23,51 @@ function onPlayerStateChange(event,callback = printThing) {
 	if(event.data == 1){ //playing
 		window.uploadYT.pauseVideo();
 		let data = uploadYT.getVideoData();
-		console.log(data);
+		//console.log(data);
 		let track = new Track(uploadYT.getVideoUrl(),data.title);
 		track.filetype = "YT";
 		track.artist = data.author;
 		track.duration = uploadYT.getDuration();
-		callback(track);
+		//callback(track);
+		//console.log("New Track",track);
+		onPlayerStateChange = doNothing;
+		album.addTrack(track);
+		callback(album,true);
 	}
 }
-function DEPRECIATEDgetYTPlaylist(id){
-	uploadYT.setVolume(0);
-	uploadYT.cuePlaylist({listType:'playlist',list: id,index:0,startSeconds:0});
-}
-function getYTPlaylist(id,folder,callback = printThing){
-	ajax('getYTPlaylist.php','POST',{'playlist_id':id,'folder':folder},function(response){
+function ajaxYTPlaylist(response){
+	try{
 		let tmp = JSON.parse(response);
-		tmp[1].forEach(function(track,index,array){
-			array[index] = Track.fromJson(track);
-		});
 		tmp = Album.fromJson(JSON.stringify(tmp));
-		callback(tmp);
-	});
+		console.log(tmp.trackList)
+		if(tmp.trackList.length == 0){
+			throw "Bad Playlist Id"
+		}
+		uploadAlbum(tmp,true);
+	}catch(e){
+		alert("Upload Failed");
+	}
 }
-function getYTVideo(id){
+function getYTVideo(id,album,callback = handleYTEvent,secondCallback = uploadAlbum){
 	uploadYT.setVolume(0);
+	onPlayerStateChange = function(evt) {
+			callback(evt,secondCallback,album);
+		}
+	onPlayerStateFail = function(evt) {
+			alert("Upload Failed");
+			onPlayerStateFail = doNothing;
+		}
 	uploadYT.cueVideoById(musicManager.getYoutubeId(id), 0);
 }
+function DEPRECIATEDgetYTPlaylist(id,callback = printThing){
+	uploadYT.setVolume(0);
+	onPlayerStateChange = callback;
+	uploadYT.cuePlaylist({listType:'playlist',list: id,index:0,startSeconds:0});
+}
+function getYTPlaylist(id,folder){
+	ajax('getYTPlaylist.php','POST',{'playlist_id':id,'folder':folder},ajaxYTPlaylist);
+}
+
 function createUploadYT(){
 	window.YT.ready(function() {
 		window.uploadYT = new window.YT.Player('tmp_player', {
@@ -51,7 +76,12 @@ function createUploadYT(){
 			playerVars: {'controls': 0,'disablekb':1,'fs':0,'modestbranding':1,'playsinline':1},
 			videoId: ""
 		});
-		uploadYT.addEventListener('onStateChange','onPlayerStateChange');
+		uploadYT.addEventListener("onStateChange", function(evt) {
+			onPlayerStateChange(evt);
+		});
+		uploadYT.addEventListener("onError", function(evt) {
+			onPlayerStateFail(evt);
+		});
 	});
 }
 
@@ -94,7 +124,7 @@ function quickUpdate(album,artworkUrl="",artist="",genre=""){
     console.log(album);
     uploadAlbum(album);
 }
-function uploadAlbum(album){
+function uploadAlbum(album,displayToUser = false){
 	//console.log(album);
 	let tmpAlbum = Album.fromJson(JSON.stringify(album));
 	tmpAlbum.sort();
@@ -107,6 +137,9 @@ function uploadAlbum(album){
 		}),
 		success:function(results) {
 			console.log(results);
+			if(results && displayToUser){
+				alert("Uploaded Successfully");
+			}
 		}
 	});
 }
@@ -115,5 +148,11 @@ function uploadAllAlbums(){
 		uploadAlbum(album);
 	});
 }
+
+/*examples
+ * getYTPlaylist("PLplWQWlFS075ub5htDKmtPOBhn8JXL1YM","DOOM");
+ * getYTPlaylist("PL66C3A99730C3F3F2","Minish Cap");
+ * getYTVideo("https://youtu.be/B7T9t5Swu0c?list=PL66C3A99730C3F3F2",mm.data[0])
+ */
 
 

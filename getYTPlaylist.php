@@ -18,18 +18,6 @@
         $api_url = 'https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&pageToken=' . $pageToken . '&playlistId='. $playlist_id . '&key=' . $api_key;
         return json_decode(file_get_contents($api_url));
     }
-
-    
-    
-    /*if (!file_exists('music/'.$folder)) {
-        $oldmask = umask(0);
-        mkdir('music/'.$folder, 0777, true);
-        if(!file_exists('music/'.$folder.'/tracks.txt')){
-            touch('music/'.$folder.'/tracks.txt');
-            chmod('music/'.$folder.'/tracks.txt', 0777);
-        }
-        umask($oldmask);
-    }*/
     $album = array();
     $title = mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $_POST["folder"]);
     //$title = mb_ereg_replace("([\.]{2,})", '', $file);
@@ -55,7 +43,18 @@
             $artist = $item->snippet->channelTitle;
             $track_num = $item->snippet->position;
             $artwork_url = $item->snippet->thumbnails->maxres->url;
-            //fwrite($myfile, $videoId.",".$title."\n");
+            if (empty ($artwork_url)) {
+                $artwork_url = $item->snippet->thumbnails->standard->url;
+            }
+            if (empty ($artwork_url)) {
+                $artwork_url = $item->snippet->thumbnails->high->url;
+            }
+            if (empty ($artwork_url)) {
+                $artwork_url = $item->snippet->thumbnails->medium->url;
+            }
+            if (empty ($artwork_url)) {
+                $artwork_url = $item->snippet->thumbnails->default->url;
+            }
             $track[0] = $src;
             $track[1] = $title;
             $track[2] = $artist;
@@ -63,7 +62,8 @@
             $track[4] = "YT";
             $track[5] = $track_num;
             $track[6] = $artwork_url;
-            array_push($album[1],json_encode($track));
+            //array_push($album[1],json_encode($track));
+            array_push($album[1],$track);
         }
         //echo $pageToken." ";
         $count += 1;
@@ -71,5 +71,8 @@
             break;
         }
     }
+    $album[2] = "";
+    $album[3] = "";
+    $album[4] = $album[1][0][6];
     echo json_encode($album);
 ?>

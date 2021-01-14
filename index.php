@@ -320,7 +320,7 @@
 				}
 				customSettings.applySettings();
 				var tmpUsrPref = new UserPreferences([],[],CustomSettings.fromJson(JSON.stringify(customSettings)));
-				var data = <?php echo file_get_contents("https://crusaderradio.net/getData.php");?>;
+				var data = <?php include "getData.php";?>;
 				var tmpData = JSON.parse(JSON.stringify(data));
 				convertToFramework(data);
 				window.mm = new musicManager(data,tmpUsrPref,'html-player','sc-player','yt-player','fancy_player/SoundcloudApi.js','fancy_player/YoutubeApi.js');
