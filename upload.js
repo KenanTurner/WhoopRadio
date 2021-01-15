@@ -32,15 +32,17 @@ function handleYTEvent(event,callback = printThing,album = null){
 		//console.log("New Track",track);
 		onPlayerStateChange = doNothing;
 		album.addTrack(track);
-		callback(album,true);
+		//callback(album,true);
+		//Bruh we have to wait for the xhr to complete before alerting the user...
+		setTimeout(function(){callback(album,true);}, 100);
 	}
 }
 function ajaxYTPlaylist(response){
 	try{
 		let tmp = JSON.parse(response);
 		tmp = Album.fromJson(JSON.stringify(tmp));
-		console.log(tmp.trackList)
-		if(tmp.trackList.length == 0){
+		//console.log(tmp)
+		if(tmp.track_list.length == 0){
 			throw "Bad Playlist Id"
 		}
 		uploadAlbum(tmp,true);
@@ -128,6 +130,15 @@ function uploadAlbum(album,displayToUser = false){
 	//console.log(album);
 	let tmpAlbum = Album.fromJson(JSON.stringify(album));
 	tmpAlbum.sort();
+	var callback = function(data){
+		console.log(data);
+	}
+	if(displayToUser){
+		callback = function(data){
+			console.log(data,"Alerting User");
+			alert("Uploaded Successfully");
+		}
+	}
 	$.ajax({
 		url: 'setData.php',
 		type: 'POST',
@@ -135,12 +146,7 @@ function uploadAlbum(album,displayToUser = false){
 			filename: album["title"],
 			data: JSON.stringify(tmpAlbum,null,'\t')
 		}),
-		success:function(results) {
-			console.log(results);
-			if(results && displayToUser){
-				alert("Uploaded Successfully");
-			}
-		}
+		success:callback
 	});
 }
 function uploadAllAlbums(){
