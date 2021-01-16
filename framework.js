@@ -167,11 +167,11 @@ class Album{
 		track = Track.fromJson(JSON.stringify(track));
 		
 		//empty track_list
-		/*if(this.track_list.length==0){
+		if(this.track_list.length==0){
 			track["track_num"] = 0;
 			this.track_list.push(track);
 			return true;
-		}*/
+		}
 		//adding -1
 		if(track["track_num"] <= -1){
 			track["track_num"] = this.track_list[this.track_list.length-1]["track_num"]+1;

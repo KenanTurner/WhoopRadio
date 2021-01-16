@@ -74,7 +74,7 @@ function loadUploadTrackMenu(){
 		albumNames.push(album.title);
 		let div = document.createElement('option');
 		div.value = album.title;
-		div.innerText = album.title;;
+		div.innerText = album.title;
 		fragment.appendChild(div);
 	});
 	//console.log(fragment);
@@ -93,6 +93,7 @@ function uploadNewTrack(){
 		console.log(pair[0]+ ', '+ pair[1]);
 		if(pair[0] == "filetype" && !pair[1]){
 			pair[1] = musicManager.getFiletype(track.src);
+			console.log("AHHHHH",pair[1]);
 		}
 		if(pair[0] == "src" && (pair[1]!=track.src)){
 			track.duration = -1;
@@ -100,28 +101,33 @@ function uploadNewTrack(){
 		track[pair[0]] = pair[1];
 	}
 	let albumTitle = track.album;
+	let album = null;
 	if(albumTitle == "new_album"){
 		albumTitle = promptValue("Please enter the album title");
+		album = new Album(albumTitle,[]);
+	}else{
+		album = mm.data[mm._albumTitleToAlbum(albumTitle)];
 	}
+	album = Album.fromJson(JSON.stringify(album));
 	track = Track.fromJson(JSON.stringify(track));
-	
+	if(track.title == "LONGANDRANDOMSTRING" && track.filetype == "HTML"){
+		track.title = promptValue("Please enter the track title");
+	}
 	if(track.src == "LONGANDRANDOMSTRING"){
 		track.src = promptValue("Please enter the src. This really shouldn't happen.");
 	}
-	if(track.title == "LONGANDRANDOMSTRING" && track.filetype != "HTML"){
-		track.title = promptValue("Please enter the track title");
+	switch(track.filetype){
+		case "YT":
+			getYTVideo(track.src,album);
+			break;
+		case "SC":
+			getSCPlaylist(track.src,album,true);
+			break;
+		default:
+			album.addTrack(track);
+			uploadAlbum(album,true);
 	}
-	/*ajax({
-        url: 'http://example.com/catalog/create/' + targetNode.id + '?name=' + encode(to.inp[0].value),
-        success: function (result) {
-            if (result.isOk == false) alert(result.message);
-        },
-        async: false
-    });*/
-
-	
-	
-	console.log(track,albumTitle);
+	console.log(track,album);
 	
 }
 function promptValue(message){

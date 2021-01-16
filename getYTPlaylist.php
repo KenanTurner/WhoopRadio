@@ -1,8 +1,7 @@
 <?php
     //$url = $_POST["href"];
     //$url = "PLvNp0Boas723CiuhA_qJDad2r1XmAZaBw";
-    $playlist_id =  $_POST["playlist_id"];
-    $folder = $_POST["folder"];
+    $id =  $_POST["id"];
     
     function findFile($dir){
 		if(file_exists($dir)){
@@ -31,7 +30,7 @@
     $pageToken = "";
     $count = 0;
     while ($count < 10){
-        $playlist = getYoutubeJson($playlist_id,$pageToken);
+        $playlist = getYoutubeJson($id,$pageToken);
         $pageToken = $playlist->nextPageToken;
         //print_r($playlist);
         
@@ -74,5 +73,5 @@
     $album[2] = "";
     $album[3] = "";
     $album[4] = $album[1][0][6];
-    echo json_encode($album);
+    echo stripslashes(json_encode($album));
 ?>

@@ -327,6 +327,7 @@ body {
     height: var(--sq-album-mobile);
     box-sizing: border-box;
     padding: 10px;
+    padding-right: 11px;
 }
 
 .album {

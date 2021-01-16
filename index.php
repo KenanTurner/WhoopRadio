@@ -324,10 +324,13 @@
 				var tmpData = JSON.parse(JSON.stringify(data));
 				convertToFramework(data);
 				window.mm = new musicManager(data,tmpUsrPref,'html-player','sc-player','yt-player','fancy_player/SoundcloudApi.js','fancy_player/YoutubeApi.js');
+				mm._sortAlbums()
 				document.getElementsByClassName("album-container")[0].innerHTML = "";
+				var fragment = new DocumentFragment();
 				mm.data.forEach(function(album){
-					document.getElementsByClassName("album-container")[0].appendChild(album.toHTML());
+					fragment.appendChild(album.toHTML());
 				});
+				document.getElementsByClassName("album-container")[0].appendChild(fragment);
 				loadEventListeners();
 				mm.subscribe(mm._setTrack,updateCurrentlyPlaying);
 				mm.subscribe(mm._updateTime,updateTrackTime);
@@ -356,12 +359,22 @@
 				//showMenu("upload-menu");
 				
 			</script>
-			<div id="tmp_player"></div> <!--Youtube embed-->
+			<div id="tmp-yt"></div> <!--Youtube embed-->
 			<script>
 				// 2. This code loads the IFrame Player API code asynchronously.
 				musicManager.loadScript("fancy_player/YoutubeApi.js", function() {
 					console.log("Soutube Api has been loaded");
 					createUploadYT();
+				});
+			</script>
+			<iframe id="tmp-sc" width="100%" height="144" scrolling="no" frameborder="no" allow="autoplay"
+			  src="https://w.soundcloud.com/player/?url=;"> <!--Soundcloud embed-->
+			</iframe>
+			<script>
+				var tmp_sc = null;
+				musicManager.loadScript("fancy_player/SoundcloudApi.js", function() {
+					console.log("Soundsoup Api has been loaded");
+					createUploadSC();
 				});
 			</script>
 		</div>

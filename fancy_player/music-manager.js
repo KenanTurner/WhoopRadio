@@ -259,7 +259,7 @@ class musicManager {
 			}
 		}
 		if (event.data == 1){ //PLAYING
-			this._setDuration(this._YTAudio.getDuration());
+			this._setDuration(Math.ceil(this._YTAudio.getDuration()));
 			var self = this; //keep a copy to use later
 			this._myTimer = setInterval(function(){
 				self._updateTime(self._YTAudio.getCurrentTime()); //manually call updateTime
@@ -846,6 +846,135 @@ class musicManager {
 		return albumContainer;
 	}
 	
+	//TODO
+	_albumTitleToAlbum(title){
+		let index = -1;
+		this.data.forEach(function(album,i){
+			if(album.title == title){
+				index = i;
+			}
+		});
+		return index;
+	}
+	
+	//TODO
+	_sortAlbums(key="title",reversed=false){
+		if(!this.data.length){return true};
+		switch(typeof(this.data[0][key])){
+			case "number":
+				this.data.sort(function(a,b){
+					let tmp = a[key]-b[key];
+					if(tmp!=0){return tmp;}
+					if (a["title"] < b["title"]) {
+						return -1;
+					}
+					if (a["title"] > b["title"]) {
+						return 1;
+					}
+					return 0;
+				});
+				break;
+			case "object": //TODO
+				this.data.sort(function(a,b){
+					var nameA = new Date(a[key]);
+					var nameB = new Date(b[key]);
+					if (nameA < nameB) {
+						return -1;
+					}
+					if (nameA > nameB) {
+						return 1;
+					}
+					// names must be equal
+					if (a["title"] < b["title"]) {
+						return -1;
+					}
+					if (a["title"] > b["title"]) {
+						return 1;
+					}
+					return 0;
+				});
+				break;
+			case "string":
+				this.data.sort(function(a,b){
+					var nameA = a[key].toUpperCase(); // ignore upper and lowercase
+					var nameB = b[key].toUpperCase(); // ignore upper and lowercase
+					if(nameA.length==0 || nameB.length==0){
+						if (nameA < nameB) {
+							return 1;
+						}
+						if (nameA > nameB) {
+							return -1;
+						}
+					}
+					
+					if (nameA < nameB) {
+						return -1;
+					}
+					if (nameA > nameB) {
+						return 1;
+					}
+					// names must be equal
+					if (a["title"] < b["title"]) {
+						return -1;
+					}
+					if (a["title"] > b["title"]) {
+						return 1;
+					}
+					return 0;
+				});
+				break;
+			default:
+				if(key == "artist"){
+					this.data.sort(function(a,b){
+						var nameA = a.getArtists().toUpperCase(); // ignore upper and lowercase
+						var nameB = b.getArtists().toUpperCase(); // ignore upper and lowercase
+						if(nameA.length==0 || nameB.length==0){
+							if (nameA < nameB) {
+								return 1;
+							}
+							if (nameA > nameB) {
+								return -1;
+							}
+						}
+						
+						if (nameA < nameB) {
+							return -1;
+						}
+						if (nameA > nameB) {
+							return 1;
+						}
+						// names must be equal
+						if (a["title"] < b["title"]) {
+							return -1;
+						}
+						if (a["title"] > b["title"]) {
+							return 1;
+						}
+						return 0;
+					});
+				}else if(key == "duration"){
+					this.data.sort(function(a,b){
+						let tmp = a.getTotalDuration()-b.getTotalDuration();
+						if(tmp!=0){return tmp;}
+						if (a["title"] < b["title"]) {
+							return -1;
+						}
+						if (a["title"] > b["title"]) {
+							return 1;
+						}
+						return 0;
+					});
+					break;
+				}else{
+					console.log("Error sorting");
+					return this._sortAlbums("title",reversed);
+				}
+		}
+		if(reversed){
+			this.data.reverse();
+		}
+	}
+	
 	
 	/**
 	 * Returns the filetype of the given source.
@@ -862,7 +991,8 @@ class musicManager {
 			src = tmp["host"];
 			if(src.search('soundcloud')>-1){
 				if(tmp["href"].search('/sets/')>-1){
-					return "SC-Album";
+					//TODO Weird stuff with sc
+					return "SC";
 				}
 				return "SC";
 			}
