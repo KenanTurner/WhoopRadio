@@ -1101,19 +1101,33 @@ class musicManager {
 	 */
 	 //TODO: needs cleaning
 	static getYoutubeId(url){
-		if(url.length == 11 && url.indexOf(".") == -1){
+		if(url.length == 11 && url.indexOf(".") == -1){ //Will be Depreciated
 			return url;
 		}
 		try{
 			let tmp = new URL(url);
 			if(tmp.hostname == "www.youtube.com" || tmp.hostname == "youtu.be"){
-				
 				if(tmp.pathname == "/watch"){
 					let index = tmp.search.indexOf("?v=");
 					return tmp.search.substr(index+3,11);
 				}else{
 					return tmp.pathname.substr(1,11);
 				}
+			}
+			return "";
+		}catch(e){
+			return "";
+		}
+	}
+	
+	static getYoutubePlaylistId(url){
+		try{
+			let tmp = new URL(url);
+			if(tmp.hostname == "www.youtube.com" || tmp.hostname == "youtu.be"){
+				let searchParams = new URLSearchParams(tmp.search);
+				let id = searchParams.get("list");
+				if(!id){return ""}
+				return id;
 			}
 			return "";
 		}catch(e){

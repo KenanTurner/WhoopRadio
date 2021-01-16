@@ -215,10 +215,13 @@
 		<div class="menu-bg" id="upload-track-menu">
 			<div class="menu-content">
 				<form id="upload-track-form">
+					<div class="menu-heading">
+						Upload Track
+					</div>
 					<div class="heading">
 						Source:
 					</div>
-					<input type="text" id="track-src" name="src" required>
+					<input type="text" id="upload-track-src" name="src" required>
 					<div class="heading">
 						Filetype:
 					</div>
@@ -241,9 +244,30 @@
 		</div>
 		<div class="menu-bg" id="upload-album-menu">
 			<div class="menu-content">
-				<form onreset="resetUploadMenu();return true;" id="track-form">
-					<button onclick="" value="Submit" type="button">Upload EE</button>
-					<button onclick="" value="Submit" type="button">Upload Album</button>
+				<form id="upload-album-form">
+					<div class="menu-heading">
+						Upload Album
+					</div>
+					<div class="heading">
+						Source:
+					</div>
+					<input type="text" id="album-src" name="src" required>
+					<div class="heading">
+						Filetype:
+					</div>
+					<select id="upload-album-filetype" name="filetype">
+						<option value="">Default</option>
+						<option value="BC">Bandcamp</option>
+						<option value="SC">Soundcloud</option>
+						<option value="YT">Youtube</option>
+					</select>
+					<div class="heading">
+						Album:
+					</div>
+					<select id="upload-album-album" name="album">
+						<option value="new_album">New Album</option>
+					</select>
+					<button onclick="uploadNewAlbum()" class="fakesubmit" value="Submit" type="button">Submit</button>
 				</form>
 			</div>
 		</div>
@@ -290,16 +314,17 @@
 						<option value="YT">Youtube</option>
 						<option value="HTML">mp3,mp4,wav,ogg,flac</option>
 					</select>
-					<div class="heading" style="grid-column: span 1;">
+					<div class="heading" style="grid-column: span 1; display: none;">
 						Track Number:
 					</div>
-					<div class="number-wrapper">
+					<div class="number-wrapper" style="display: none;">
 						<input type="number" id="track-track-num" name="track_num" value="0" min="0" max="199" required>
 						<button onclick="menuValueIncrement('track-track-num',1);return false;">+</button>
 						<button onclick="menuValueIncrement('track-track-num',-1);return false;">-</button>
 					</div>
-				  <input type="reset">
-				  <button onclick="submitTrackForm(mm.currentlyPlaying.track)" class="fakesubmit" value="Submit" type="button">Submit</button>
+					<button onclick="submitTrackForm(true)" class="fakedelete" value="Submit" type="button">Delete Track</button>
+					<input type="reset">
+					<button onclick="submitTrackForm()" class="fakesubmit" value="Submit" type="button">Submit</button>
 				</form>
 			</div>
 		</div>
@@ -358,7 +383,7 @@
 				}, false);
 				//showMenu("track-menu",mm.data[1].track_list[23]);
 				//loadTrackMenu();
-				//showMenu("upload-menu");
+				showMenu("track-menu",mm.data[0].track_list[0]);
 				
 				//Title
 				var documentTitle = document.title;

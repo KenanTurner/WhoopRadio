@@ -4,13 +4,16 @@ function showMenu(id="settings-menu",...args){
 	document.body.style.overflow = "hidden";
 	window.addEventListener("click", menuEvent);
 	if(id=="settings-menu"){
-		loadSettingsMenu(mm.usrPrefs.customSettings);
+		return loadSettingsMenu(mm.usrPrefs.customSettings);
 	}
 	if(id=="track-menu"){
-		loadTrackMenu(...args);
+		return loadTrackMenu(...args);
 	}
 	if(id=="upload-track-menu"){
-		loadUploadTrackMenu(...args);
+		return loadUploadTrackMenu(...args);
+	}
+	if(id=="upload-album-menu"){
+		return loadUploadAlbumMenu(...args);
 	}
 }
 function loadSettingsMenu(settings = new CustomSettings()){
@@ -82,6 +85,21 @@ function loadUploadTrackMenu(){
 	select.appendChild(fragment);
 	
 }
+function loadUploadAlbumMenu(){
+	let albumNames = [];
+	var fragment = new DocumentFragment();
+	mm.data.forEach(function(album){
+		albumNames.push(album.title);
+		let div = document.createElement('option');
+		div.value = album.title;
+		div.innerText = album.title;
+		fragment.appendChild(div);
+	});
+	//console.log(fragment);
+	let select = document.getElementById("upload-album-album");
+	select.appendChild(fragment);
+	
+}
 function uploadNewTrack(){
 	if(!verifyForm("upload-track-form","All entries must be filled out","filetype")){
 		return;
@@ -118,16 +136,72 @@ function uploadNewTrack(){
 	}
 	switch(track.filetype){
 		case "YT":
-			getYTVideo(track.src,album);
+			getYTTrack(musicManager.getYoutubeId(track.src),album);
 			break;
 		case "SC":
 			getSCPlaylist(track.src,album,true);
+			break;
+		case "BC":
+			getBCTrack(track.src,album);
 			break;
 		default:
 			album.addTrack(track);
 			uploadAlbum(album,true);
 	}
 	console.log(track,album);
+	hideMenu();
+	
+}
+function uploadNewAlbum(){
+	if(!verifyForm("upload-album-form","All entries must be filled out","filetype")){
+		return;
+	}
+	let form = document.getElementById("upload-album-form");
+	let formData = new FormData(form);
+	let src = formData.get('src');
+	let filetype = formData.get('filetype');
+	let album = formData.get('album');
+	let albumTitle = null;
+	if(!filetype){
+		filetype = musicManager.getFiletype(src);
+	}
+	if(album == "new_album"){
+		switch(filetype){
+			case "BC":
+				album = false;
+				break;
+			case "YT":
+				album = false;
+				albumTitle = promptValue("Please enter the album title");
+				break;
+			case "SC":
+				album = new Album(promptValue("Please enter the album title"),[]);
+				break;
+		}
+	}else{
+		album = mm.data[mm._albumTitleToAlbum(album)];
+		album = Album.fromJson(JSON.stringify(album));
+	}
+	if(filetype == "YT"){
+		src = musicManager.getYoutubePlaylistId(src);
+		if(!albumTitle){
+			albumTitle = album.title;
+		}
+	}
+	console.log(src,filetype,album,albumTitle);
+	switch(filetype){
+		case "YT":
+			getYTPlaylist(src,albumTitle,album);
+			break;
+		case "SC":
+			getSCPlaylist(src,album);
+			break;
+		case "BC":
+			getBCPlaylist(src,album);
+			break;
+	}
+	hideMenu();
+	//console.log(track,album);
 	
 }
 function promptValue(message){
@@ -228,34 +302,47 @@ function submitSettingsForm(){
 	return settings;
 }
 
-function submitTrackForm(){
-	if(!verifyForm("track-form","Title, Source, and Track Number must be filled out","artist","artwork_url","filetype")){
+function submitTrackForm(deleteTrack = false){
+	if(!verifyForm("track-form","Title and Source must be filled out","artist","artwork_url","filetype")){
 		return;
 	}
-	let track = Track.fromJson(document.getElementById("track-form").dataset.track);
-	let album = mm._trackToAlbum(track)[0];
-	let index = album.findTrack(track);
+	if(deleteTrack){
+		deleteTrack = confirm("Delete Track?");
+		if(!deleteTrack){
+			return;
+		}
+	}
+	let oldTrack = Track.fromJson(document.getElementById("track-form").dataset.track);
+	let album = mm._trackToAlbum(oldTrack)[0];
+	album = Album.fromJson(JSON.stringify(album));
+	
 	let form = document.getElementById("track-form");
 	let formData = new FormData(form);
-	for(var pair of formData.entries()) {
-		console.log(pair[0]+ ', '+ pair[1]);
-		//console.log(settings[pair[0].replace(/-/g, '_').slice(2)]);
-		if(pair[0] == "filetype" && !pair[1]){
-			pair[1] = musicManager.getFiletype(track.src);
-		}
-		if(pair[0] == "src" && (pair[1]!=track.src)){
-			track.duration = -1;
-		}
-		track[pair[0]] = pair[1];
+	let title = formData.get('title');
+	let src = formData.get('src');
+	let artist = formData.get('artist');
+	let artwork_url = formData.get('artwork_url');
+	let filetype = formData.get('filetype');
+	let track_num = formData.get('track_num');
+	let track = Track.fromJson(JSON.stringify(oldTrack));
+	track.title = title;
+	track.src = src;
+	track.artist = artist;
+	track.artwork_url = artwork_url;
+	track.filetype = filetype;
+	track.track_num = track_num;
+	if(src != oldTrack.src){
+		track.filetype = musicManager.getFiletype(src);
+	}
+	
+	album.removeTrack(oldTrack);
+	if(!deleteTrack){
+		album.addTrack(track);
+	}else{
+		console.log("Removed Track",oldTrack);
 	}
 	console.log(track,album);
-	
-	
-	/*mm.usrPrefs.customSettings = settings;
-	setLocalStorage("customSettings",settings,true);
-	settings.applySettings();*/
-	album.track_list[index] = track;
-	replaceAlbum(album);
+	uploadAlbum(album,true);
 	hideMenu();
 	return;
 }

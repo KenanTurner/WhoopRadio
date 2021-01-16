@@ -18,7 +18,7 @@
         return json_decode(file_get_contents($api_url));
     }
     $album = array();
-    $title = mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $_POST["folder"]);
+    $title = mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $_POST["albumTitle"]);
     //$title = mb_ereg_replace("([\.]{2,})", '', $file);
     $album[0] = $title;
     $album[1] = array();

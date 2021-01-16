@@ -38,7 +38,7 @@ function handleYTEvent(event,callback = printThing,album = null){
 		setTimeout(function(){callback(album,true);}, 100);
 	}
 }
-function ajaxJsonPlaylist(response){
+function ajaxJsonPlaylist(response,album=false){
 	try{
 		let tmp = JSON.parse(response);
 		tmp = Album.fromJson(JSON.stringify(tmp));
@@ -46,7 +46,14 @@ function ajaxJsonPlaylist(response){
 		if(tmp.track_list.length == 0){
 			throw "single_track"
 		}
-		//console.log(tmp);
+		if(album){
+			album = Album.fromJson(JSON.stringify(album));
+			tmp.track_list.forEach(function(track){
+				album.addTrack(track);
+			});
+			uploadAlbum(album,true);
+			return;
+		}
 		uploadAlbum(tmp,true);
 	}catch(e){
 		/*if(e == "single_track"){
@@ -89,14 +96,14 @@ function DEPRECIATEDgetYTPlaylist(id,callback = printThing){
 	onPlayerStateChange = callback;
 	uploadYT.cuePlaylist({listType:'playlist',list: id,index:0,startSeconds:0});
 }
-function getYTPlaylist(id,folder){
-	ajax('getYTPlaylist.php','POST',{'id':id,'folder':folder},ajaxJsonPlaylist,true);
+function getYTPlaylist(id,albumTitle,album=false){
+	ajax('getYTPlaylist.php','POST',{'id':id,'albumTitle':albumTitle},function(response){ajaxJsonPlaylist(response,album)},true);
 }
 function getYTTrack(id,album){
 	ajax('getYTTrack.php','POST',{'id':id},function(response){ajaxJsonTrack(response,album)},true);
 }
-function getBCPlaylist(id){
-	ajax('getBCPlaylist.php','POST',{'href':id},ajaxJsonPlaylist);
+function getBCPlaylist(id,album=false){
+	ajax('getBCPlaylist.php','POST',{'href':id},function(response){ajaxJsonPlaylist(response,album)},true);
 }
 function getBCTrack(id,album){
 	ajax('getBCTrack.php','POST',{'href':id},function(response){ajaxJsonTrack(response,album)},true);
@@ -235,7 +242,7 @@ function uploadAlbum(album,displayToUser = false){
 	if(displayToUser){
 		callback = function(data){
 			console.log(data,"Alerting User");
-			alert("Uploaded Successfully");
+			alert("Uploaded Successfully. Refresh the page to see changes.");
 		}
 	}
 	$.ajax({
