@@ -341,6 +341,7 @@
 				mm.subscribe(mm.toggleLoop,loopEvent);
 				mm.subscribe(mm.toggleShuffle,shuffleEvent);
 				mm.subscribe(mm.changeVolume,volumeEvent);
+				mm.subscribe(mm.togglePlay,updateTitle);
 				
 				//keyboard controls
 				document.addEventListener('keyup', keyUp, false);
@@ -357,6 +358,9 @@
 				//showMenu("track-menu",mm.data[1].track_list[23]);
 				//loadTrackMenu();
 				//showMenu("upload-menu");
+				
+				//Title
+				var documentTitle = document.title;
 				
 			</script>
 			<div id="tmp-yt"></div> <!--Youtube embed-->

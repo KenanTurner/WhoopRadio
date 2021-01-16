@@ -111,6 +111,13 @@ function albumToDivElement(album){
 	}
 	return false;
 }
+function updateTitle(bool){
+	if(bool){
+		document.title = mm.currentlyPlaying.track.title + ' // ' + mm.currentlyPlaying.album.title;
+	}else{
+		document.title = documentTitle;
+	}
+}
 
 function trackToDivElement(album,track){
 	let albumElement = albumToDivElement(album);
