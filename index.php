@@ -341,6 +341,7 @@
 				mm.subscribe(mm.toggleLoop,loopEvent);
 				mm.subscribe(mm.toggleShuffle,shuffleEvent);
 				mm.subscribe(mm.changeVolume,volumeEvent);
+				mm.subscribe(mm._setTrack,updateTitle);
 				mm.subscribe(mm.togglePlay,updateTitle);
 				
 				//keyboard controls
