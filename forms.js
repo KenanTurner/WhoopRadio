@@ -9,6 +9,9 @@ function showMenu(id="settings-menu",...args){
 	if(id=="track-menu"){
 		return loadTrackMenu(...args);
 	}
+	if(id=="album-menu"){
+		return loadAlbumMenu(...args);
+	}
 	if(id=="upload-track-menu"){
 		return loadUploadTrackMenu(...args);
 	}
@@ -38,7 +41,6 @@ function loadSettingsMenu(settings = new CustomSettings()){
 }
 function loadTrackMenu(track = Track.fromJson(document.getElementById("track-form").dataset.track)){
 	track = Track.fromJson(JSON.stringify(track));
-	let tags = document.getElementsByTagName("input");
 	for(item in track){
 		//console.log("--"+item.replace(/_/g, '-'));
 		//console.log("track-"+item.replace(/_/g, '-'));
@@ -68,6 +70,21 @@ function loadTrackMenu(track = Track.fromJson(document.getElementById("track-for
 	}
 	let form = document.getElementById("track-form")
 	form.dataset.track = JSON.stringify(track);
+}
+function loadAlbumMenu(album = Album.fromJson(document.getElementById("album-form").dataset.album)){
+	album = Album.fromJson(JSON.stringify(album));
+	for(item in album){
+		//console.log("--"+item.replace(/_/g, '-'));
+		//console.log("album-"+item.replace(/_/g, '-'));
+		let input = document.getElementById("album-"+item.replace(/_/g, '-'));
+		if(input){
+			input.defaultValue = album[item];
+		}
+	}
+	let input = document.getElementById("album-artists");
+	input.defaultValue = album.getArtists();
+	let form = document.getElementById("album-form")
+	form.dataset.album = JSON.stringify(album);
 }
 
 function loadUploadTrackMenu(){
@@ -199,6 +216,8 @@ function uploadNewAlbum(){
 		case "BC":
 			getBCPlaylist(src,album);
 			break;
+		default:
+			alert("Upload Failed. Not a valid album.");
 	}
 	hideMenu();
 	//console.log(track,album);
@@ -232,7 +251,11 @@ function resetTrackMenu(){
 	if(confirm("Reset Settings?")){
 		setTimeout(loadTrackMenu, 20);
 	}
-	//change userprefs here
+}
+function resetAlbumMenu(){
+	if(confirm("Reset Settings?")){
+		setTimeout(loadAlbumMenu, 20);
+	}
 }
 function menuEvent(event){
 	// Close the menu if the user clicks outside of it
@@ -343,6 +366,41 @@ function submitTrackForm(deleteTrack = false){
 	}
 	console.log(track,album);
 	uploadAlbum(album,true);
+	hideMenu();
+	return;
+}
+function submitAlbumForm(deleteAlbum = false){
+	if(!verifyForm("album-form","Title must be filled out","artists","artwork_url","genre")){
+		return;
+	}
+	if(deleteAlbum){
+		deleteAlbum = confirm("Delete Album?");
+		if(!deleteAlbum){
+			return;
+		}
+	}
+	let oldAlbum = Album.fromJson(document.getElementById("album-form").dataset.album);
+	album = Album.fromJson(JSON.stringify(oldAlbum));
+	console.log(oldAlbum);
+	
+	let form = document.getElementById("album-form");
+	let formData = new FormData(form);
+	let title = formData.get('title');
+	let artists = formData.get('artists');
+	let artwork_url = formData.get('artwork_url');
+	let genre = formData.get('genre');
+	album.title = title;
+	album.setArtists(artists);
+	album.artwork_url = artwork_url;
+	album.genre = genre;
+	if(title != oldAlbum.title){
+		deleteAlbum = true;
+	}
+	console.log(album);
+	uploadAlbum(album,true,false);
+	if(deleteAlbum){
+		uploadAlbum(oldAlbum,false,true);
+	}
 	hideMenu();
 	return;
 }

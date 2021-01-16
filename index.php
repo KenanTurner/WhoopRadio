@@ -273,16 +273,27 @@
 		</div>
 		<div class="menu-bg" id="album-menu">
 			<div class="menu-content">
-				Here is the album menu
-				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec odio metus. Donec dapibus condimentum magna et scelerisque. Nulla nisi nulla, gravida sed justo ut, pellentesque fermentum erat. Sed in faucibus nisl, in convallis tortor. Nullam vel vehicula ex. Nulla condimentum libero et velit congue, in elementum sem convallis. Quisque augue urna, ultricies id iaculis a, sollicitudin sit amet augue. Suspendisse non sollicitudin mauris. Fusce at tincidunt est, vitae vestibulum felis. Nunc iaculis nunc eget lectus feugiat lobortis. Aenean iaculis facilisis bibendum. Sed gravida felis eget ultrices commodo. Vestibulum elementum odio aliquam risus molestie, quis auctor orci lacinia. Etiam faucibus elementum ex quis feugiat.
-
-				Mauris blandit ligula metus, et varius lectus porttitor at. Maecenas malesuada tempor erat quis pellentesque. Suspendisse potenti. Cras euismod pharetra varius. In arcu metus, convallis id arcu et, tempor pharetra massa. Donec sagittis nulla leo, ac consequat velit blandit non. Aliquam non velit metus. Fusce non est consequat, sollicitudin sapien ac, blandit elit.
-
-				Sed in posuere risus, id dapibus enim. Aliquam vitae sodales enim. Pellentesque et sem at libero commodo ullamcorper. Aliquam in nisl dictum magna laoreet convallis. Nullam molestie egestas mi nec molestie. Donec interdum, lacus quis fringilla gravida, neque ligula interdum leo, ac pulvinar ligula leo et mi. Aenean porta tincidunt velit, nec sagittis urna luctus sit amet. Ut semper neque eget tempor iaculis. Morbi ante tortor, pharetra nec ex ac, faucibus elementum purus. Etiam tellus odio, dapibus vel dictum a, pulvinar in massa. In id magna volutpat, volutpat elit ut, aliquet enim. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce a nisl a diam fringilla volutpat. Aliquam elementum justo felis, et consequat mauris viverra id. Morbi eu tellus bibendum risus posuere scelerisque. Sed sed vehicula lectus.
-
-				Etiam interdum, est nec auctor vestibulum, tellus sapien tempus eros, in tincidunt mi massa at tellus. Vivamus in arcu at libero rhoncus malesuada in ut augue. Nam sit amet dui eleifend, finibus odio sed, tincidunt diam. Maecenas consectetur nisl nunc, vel volutpat felis malesuada vel. Aliquam faucibus porttitor interdum. Nullam vitae finibus nisi. Nulla at ligula tortor. Sed vitae vulputate mi. Proin dui eros, ultricies eu sapien eu, molestie imperdiet metus. Donec nec iaculis mi, nec hendrerit odio.
-
-				Quisque eget purus tincidunt, blandit felis et, ultricies neque. Aenean tempor metus in molestie tristique. Mauris auctor nunc quis augue blandit, vitae maximus nunc dictum. Mauris ac facilisis risus. Morbi vestibulum elit at elit viverra consequat. Fusce consequat eleifend neque. Mauris nec lacus urna. Curabitur viverra tortor fermentum, hendrerit enim eu, convallis massa. Nam fermentum sapien et lacus vehicula mollis. Nulla et semper nibh. Pellentesque interdum, neque quis venenatis rutrum, orci arcu imperdiet tellus, ac congue mauris ex vel nisi.
+				<form onreset="resetAlbumMenu();return true;" id="album-form">
+					<div class="heading">
+						Title:
+					</div>
+					<input type="text" id="album-title" name="title" required>
+					<div class="heading">
+						Artists:
+					</div>
+					<input type="text" id="album-artists" name="artists">
+					<div class="heading">
+						Artwork URL:
+					</div>
+					<input type="text" id="album-artwork-url" name="artwork_url">
+					<div class="heading">
+						Genre:
+					</div>
+					<input type="text" id="album-genre" name="genre">
+					<button onclick="submitAlbumForm(true)" class="fakedelete" value="Submit" type="button">Delete Album</button>
+					<input type="reset">
+					<button onclick="submitAlbumForm()" class="fakesubmit" value="Submit" type="button">Submit</button>
+				</form>
 			</div>
 		</div>
 		<div class="menu-bg" id="track-menu">
@@ -383,7 +394,8 @@
 				}, false);
 				//showMenu("track-menu",mm.data[1].track_list[23]);
 				//loadTrackMenu();
-				showMenu("track-menu",mm.data[0].track_list[0]);
+				//showMenu("track-menu",mm.data[0].track_list[0]);
+				//showMenu("album-menu",mm.data[0])
 				
 				//Title
 				var documentTitle = document.title;

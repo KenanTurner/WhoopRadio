@@ -411,14 +411,17 @@ function loadEventListeners(){
 		album.children[0].addEventListener('contextmenu', function(e) {
 			//alert("You've tried to open context menu"); //here you draw your own menu
 			e.preventDefault();
-			console.log(divElementToAlbum(e.target));
-			alert("Options");
+			let album = divElementToAlbum(e.target);
+			if(album){
+				showMenu("album-menu",album);
+			}
 		}, false);
 		album.children[1].addEventListener('contextmenu', function(e) {
 			//alert("You've tried to open context menu"); //here you draw your own menu
 			e.preventDefault();
-			console.log(divElementToAlbum(e.target));
-			alert("Options");
+			if(album){
+				showMenu("album-menu",album);
+			}
 		}, false);
 	}
 	document.addEventListener("visibilitychange", function(){

@@ -232,7 +232,7 @@ function quickUpdate(album,artworkUrl="",artist="",genre=""){
     console.log(album);
     uploadAlbum(album);
 }
-function uploadAlbum(album,displayToUser = false){
+function uploadAlbum(album,displayToUser = false,deleteAlbum = false){
 	//console.log(album);
 	let tmpAlbum = Album.fromJson(JSON.stringify(album));
 	tmpAlbum.sort();
@@ -245,12 +245,14 @@ function uploadAlbum(album,displayToUser = false){
 			alert("Uploaded Successfully. Refresh the page to see changes.");
 		}
 	}
+	console.log("HERE",deleteAlbum);
 	$.ajax({
 		url: 'setData.php',
 		type: 'POST',
 		data:({
 			filename: album["title"],
-			data: JSON.stringify(tmpAlbum,null,'\t')
+			data: JSON.stringify(tmpAlbum,null,'\t'),
+			del: deleteAlbum
 		}),
 		success:callback
 	});
