@@ -112,7 +112,7 @@ function albumToDivElement(album){
 	return false;
 }
 function updateTitle(bool){
-	if(bool){
+	if(mm._isPlaying){
 		document.title = mm.currentlyPlaying.track.title + ' // ' + mm.currentlyPlaying.album.title;
 	}else{
 		document.title = documentTitle;
