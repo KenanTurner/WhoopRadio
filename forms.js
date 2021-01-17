@@ -40,13 +40,14 @@ function loadSettingsMenu(settings = new CustomSettings()){
 	}
 }
 function loadTrackMenu(track = Track.fromJson(document.getElementById("track-form").dataset.track)){
+	clearForm("track-form");
 	track = Track.fromJson(JSON.stringify(track));
 	for(item in track){
 		//console.log("--"+item.replace(/_/g, '-'));
 		//console.log("track-"+item.replace(/_/g, '-'));
 		let input = document.getElementById("track-"+item.replace(/_/g, '-'));
 		if(input){
-			input.defaultValue = track[item];
+			input.value = track[item];
 			if(item == "filetype"){
 				switch(track.filetype){
 					case "BC":
@@ -71,23 +72,35 @@ function loadTrackMenu(track = Track.fromJson(document.getElementById("track-for
 	let form = document.getElementById("track-form")
 	form.dataset.track = JSON.stringify(track);
 }
+function clearForm(id){
+	let ele = document.getElementById(id).elements;
+	[...ele].forEach(function(element){
+		if(element.type == "reset" || element.type == "button"){
+		}else{
+			element.value = "";
+			//console.log(element);
+		}
+	});
+}
 function loadAlbumMenu(album = Album.fromJson(document.getElementById("album-form").dataset.album)){
+	clearForm("album-form");
 	album = Album.fromJson(JSON.stringify(album));
 	for(item in album){
 		//console.log("--"+item.replace(/_/g, '-'));
 		//console.log("album-"+item.replace(/_/g, '-'));
 		let input = document.getElementById("album-"+item.replace(/_/g, '-'));
 		if(input){
-			input.defaultValue = album[item];
+			input.value = album[item];
 		}
 	}
 	let input = document.getElementById("album-artists");
-	input.defaultValue = album.getArtists();
+	input.value = album.getArtists();
 	let form = document.getElementById("album-form")
 	form.dataset.album = JSON.stringify(album);
 }
 
 function loadUploadTrackMenu(){
+	clearForm("upload-track-form");
 	let albumNames = [];
 	var fragment = new DocumentFragment();
 	mm.data.forEach(function(album){
@@ -103,6 +116,7 @@ function loadUploadTrackMenu(){
 	
 }
 function loadUploadAlbumMenu(){
+	clearForm("upload-album-form");
 	let albumNames = [];
 	var fragment = new DocumentFragment();
 	mm.data.forEach(function(album){
@@ -355,6 +369,9 @@ function submitTrackForm(deleteTrack = false){
 	track.filetype = filetype;
 	track.track_num = track_num;
 	if(src != oldTrack.src){
+		track.filetype = musicManager.getFiletype(src);
+	}
+	if(filetype = "" || !filetype){
 		track.filetype = musicManager.getFiletype(src);
 	}
 	

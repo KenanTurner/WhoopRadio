@@ -386,7 +386,7 @@ function loadEventListeners(){
 			});
 			track.children[2].addEventListener('click', function(e) {
 				//console.log(divElementToTrack(e.target));
-				alert("Liked");
+				//alert("Liked");
 			});
 			
 		}
@@ -447,7 +447,7 @@ function loadEventListeners(){
 		scrollIntoViewHeader(trackToDivElement(mm.currentlyPlaying.album,mm.currentlyPlaying.track));
 	});
 	trackElement.children[2].addEventListener('click', function(e) {
-		alert("Liked");
+		//alert("Liked");
 	});
 }
 
