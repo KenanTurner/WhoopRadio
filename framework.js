@@ -229,6 +229,11 @@ class Album{
 			track.artist = artist;
 		});
 	}
+	setArtwork(url){
+		this.track_list.forEach(function(track){
+			track.artwork_url = url;
+		});
+	}
 	hasTrack(track){
 		let index = containsObject(track,this.track_list);
 		if(index != -1){
