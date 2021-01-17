@@ -51,10 +51,10 @@ function ajaxJsonPlaylist(response,album=false){
 			tmp.track_list.forEach(function(track){
 				album.addTrack(track);
 			});
-			uploadAlbum(album,true);
+			uploadAlbum(album,true,false,"Upload",album.title);
 			return;
 		}
-		uploadAlbum(tmp,true);
+		uploadAlbum(tmp,true,false,"Upload",tmp.title);
 	}catch(e){
 		/*if(e == "single_track"){
 			alert("Upload Failed. To upload a single track, use Upload Track");
@@ -75,7 +75,7 @@ function ajaxJsonTrack(response,album){
 		album = Album.fromJson(JSON.stringify(album));
 		album.addTrack(tmp);
 		//console.log(tmp,album);
-		uploadAlbum(album,true);
+		uploadAlbum(album,true,false,"Upload",album.title,tmp.title);
 	}catch(e){
 		alert("Upload Failed");
 	}
@@ -170,7 +170,11 @@ function getSounds(obj,album,singleTrack){
 					//console.log(sound.title,sound.permalink_url);
 				});
 				console.log(album);
-				uploadAlbum(album,true);
+				if(singleTrack){
+					uploadAlbum(album,true,false,"Upload",album.title,currentSound[0].title);
+				}else{
+					uploadAlbum(album,true,false,"Upload",album.title);
+				}
 			}catch(e){
 				if(singleTrack){
 					alert("Upload Failed. To upload a soundcloud playlist, use Upload Album");
@@ -232,7 +236,7 @@ function quickUpdate(album,artworkUrl="",artist="",genre=""){
     console.log(album);
     uploadAlbum(album);
 }
-function uploadAlbum(album,displayToUser = false,deleteAlbum = false){
+function uploadAlbum(album,displayToUser = false,deleteAlbum = false,...logging){
 	//console.log(album);
 	let tmpAlbum = Album.fromJson(JSON.stringify(album));
 	tmpAlbum.sort();
@@ -256,10 +260,11 @@ function uploadAlbum(album,displayToUser = false,deleteAlbum = false){
 		}),
 		success:callback
 	});
+	logUserEvent(...logging);
 }
 function uploadAllAlbums(){
 	mm.data.forEach(function(album){
-		uploadAlbum(album);
+		uploadAlbum(album,false,false,"Upload",album.title);
 	});
 }
 

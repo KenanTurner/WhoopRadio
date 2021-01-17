@@ -163,7 +163,7 @@ function uploadNewTrack(){
 			break;
 		default:
 			album.addTrack(track);
-			uploadAlbum(album,true);
+			uploadAlbum(album,true,false,"Upload",album.title,track.title);
 	}
 	console.log(track,album);
 	hideMenu();
@@ -365,7 +365,11 @@ function submitTrackForm(deleteTrack = false){
 		console.log("Removed Track",oldTrack);
 	}
 	console.log(track,album);
-	uploadAlbum(album,true);
+	if(deleteTrack){
+		uploadAlbum(album,true,false,"Delete",album.title,oldTrack.title);
+	}else{
+		uploadAlbum(album,true,false,"Modify",album.title,oldTrack.title,track.title);
+	}
 	hideMenu();
 	return;
 }
@@ -397,9 +401,9 @@ function submitAlbumForm(deleteAlbum = false){
 		deleteAlbum = true;
 	}
 	console.log(album);
-	uploadAlbum(album,true,false);
+	uploadAlbum(album,true,false,"Modify",oldAlbum.title,album.title);
 	if(deleteAlbum){
-		uploadAlbum(oldAlbum,false,true);
+		uploadAlbum(oldAlbum,false,true,"Delete",oldAlbum.title);
 	}
 	hideMenu();
 	return;

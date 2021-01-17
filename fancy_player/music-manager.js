@@ -787,7 +787,7 @@ class musicManager {
 		if(duration && this.currentlyPlaying['track'].duration != duration){
 			this.currentlyPlaying['track'].duration = duration;
 			//TODO upload here?
-			uploadAlbum(this.currentlyPlaying['album']);
+			uploadAlbum(this.currentlyPlaying['album'],false,false,"Duration",this.currentlyPlaying.album.title,this.currentlyPlaying.track.title);
 		}
 		this._publish(this._setDuration,this.currentDuration);
 		return this.currentDuration;

@@ -66,15 +66,38 @@ function logCustomUser(id,page) {
 
 //Onload
 function loaded(){
-	//Check for user id
-	var userId = getCookie("userId");
-	if (userId == ""){
-		console.log("Initializing UserId");
-		userId = genUser();
-		setCookie("userId", userId, 365);
-	}
-	console.log("User: ",userId);
-	logCustomUser(userId,window.location.pathname);
+    //Check for user id
+    var userId = getCookie("userId");
+    if (userId == ""){
+	    console.log("Initializing UserId");
+	    userId = genUser();
+	    setCookie("userId", userId, 365);
+    }
+    console.log("User: ",userId);
+    logCustomUser(userId,window.location.pathname);
+}
+
+function logUserEvent(...logging){
+    var userId = getCookie("userId");
+    if (userId == ""){
+	    console.log("Initializing UserId");
+	    userId = genUser();
+	    setCookie("userId", userId, 365);
+    }
+    var page = window.location.pathname;
+    var data = JSON.stringify(logging);
+    $.ajax({
+        url: 'logCustomUser.php',
+        type: 'POST',
+        data: {
+	    id:userId,
+	    page:page,
+	    data:data
+	},
+        success: function(data) {
+            //console.log('Custom Action logged'); // Inspect this in your console
+        }
+    });
 }
 
 function getAllStorage() {
@@ -116,15 +139,4 @@ function deleteLocalStorage(name){
 	localStorage.removeItem(name);
 }
 
-//onload
-//window.addEventListener("load", function() { loaded() });
 loaded();
-//https://stackoverflow.com/a/43027791
-//var waitForJQuery = setInterval(function () {
-    //if (typeof $ != 'undefined') {
-
-        //// place your code here.
-	//loaded();
-        //clearInterval(waitForJQuery);
-    //}
-//}, 10);
