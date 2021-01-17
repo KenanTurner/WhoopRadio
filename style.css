@@ -466,6 +466,41 @@ footer {
     color: #ffffff;
     
 }
+.help {
+    margin: 0px;
+    padding: 0px;
+}
+.help *{
+    margin: 0px;
+    padding: 10px;
+}
+.help h1{
+    text-align: center;
+    font-size: 32px;
+}
+.help .question{
+    font-size: 24px;
+    font-weight: bold;
+}
+.help .answer{
+    margin-left: 24px;
+    font-size: 20px;
+}
+.help ul{
+    list-style-type: square;
+}
+.help li{
+    padding: 0px;
+    padding-bottom: 10px;
+}
+.help pre{
+    padding: 0px;
+}
+.help .version{
+    font-size: 16px;
+    padding-bottom: 5px;
+    padding: 0px;
+}
 form {
     display: grid;
     grid-template-columns: 75% 25%;

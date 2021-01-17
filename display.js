@@ -198,6 +198,10 @@ function updateCurrentlyPlaying(){
 	fragment.children[0].style.backgroundImage = "url("+ element.children[0].children[0].dataset.lazysrc+")";
 	element.children[0].style.position = "relative";
 	element.children[0].appendChild(fragment);
+	
+	if(trackElement.children[0].children[1]){
+		trackElement.children[0].removeChild(trackElement.children[0].children[1]);
+	}
 }
 
 //https://stackoverflow.com/a/11486026
@@ -434,25 +438,17 @@ function loadEventListeners(){
 	progress.addEventListener('click', progressBarClick);
 	//currentlyPlaying
 	let trackElement = document.getElementById("currently-playing").children[0];
-	//if(trackElement.children[1].children[0].innerText == "Loading..."){
-		//console.log(trackElement);
-		trackElement.children[0].addEventListener('click', function(e) {
-			//console.log(mm.currentlyPlaying);
-			//console.log(albumToDivElement(mm.currentlyPlaying.album));
-			showTracks(albumToDivElement(mm.currentlyPlaying.album));
-			scrollIntoViewHeader(trackToDivElement(mm.currentlyPlaying.album,mm.currentlyPlaying.track));
-			
-		});
-		trackElement.children[1].addEventListener('click', function(e) {
-			//console.log(mm.currentlyPlaying);
-			showTracks(albumToDivElement(mm.currentlyPlaying.album));
-			scrollIntoViewHeader(trackToDivElement(mm.currentlyPlaying.album,mm.currentlyPlaying.track));
-		});
-		trackElement.children[2].addEventListener('click', function(e) {
-			//console.log(divElementToTrack(e.target));
-			alert("Liked");
-		});
-	//}
+	trackElement.children[0].addEventListener('click', function(e) {
+		showTracks(albumToDivElement(mm.currentlyPlaying.album));
+		scrollIntoViewHeader(trackToDivElement(mm.currentlyPlaying.album,mm.currentlyPlaying.track));
+	});
+	trackElement.children[1].addEventListener('click', function(e) {
+		showTracks(albumToDivElement(mm.currentlyPlaying.album));
+		scrollIntoViewHeader(trackToDivElement(mm.currentlyPlaying.album,mm.currentlyPlaying.track));
+	});
+	trackElement.children[2].addEventListener('click', function(e) {
+		alert("Liked");
+	});
 }
 
 function playPauseEvent(){

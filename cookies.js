@@ -69,9 +69,9 @@ function loaded(){
     //Check for user id
     var userId = getCookie("userId");
     if (userId == ""){
-	    console.log("Initializing UserId");
-	    userId = genUser();
-	    setCookie("userId", userId, 365);
+	console.log("Initializing UserId");
+	userId = genUser();
+	setCookie("userId", userId, 365);
     }
     console.log("User: ",userId);
     logCustomUser(userId,window.location.pathname);
