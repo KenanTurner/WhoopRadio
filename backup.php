@@ -2,10 +2,10 @@
     date_default_timezone_set('America/Chicago');
     //https://stackoverflow.com/a/2021729
     function findDirectory($dir){
-	    if(is_dir($dir)){
-		    return $dir;
-	    }
-	    return findDirectory('../'.$dir);
+	if(is_dir($dir)){
+		return $dir;
+	}
+	return findDirectory('../'.$dir);
     }
     $dir = findDirectory("music/");
     $dir2 = findDirectory("backups/");
