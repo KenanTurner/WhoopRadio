@@ -9,7 +9,7 @@
     }
     $dir = findDirectory("music/");
     $zip = new ZipArchive();
-    $filename = str_replace("music/","",$dir)."music--".date("m-d-Y").".zip";
+    $filename = str_replace("BACKUPmusic/","",$dir)."music--".date("m-d-Y").".zip";
 
     if ($zip->open($filename, ZipArchive::CREATE | ZipArchive::OVERWRITE)!==TRUE) {
 	exit("cannot open <$filename>\n");
