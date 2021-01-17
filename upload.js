@@ -249,7 +249,6 @@ function uploadAlbum(album,displayToUser = false,deleteAlbum = false,...logging)
 			alert("Uploaded Successfully. Refresh the page to see changes.");
 		}
 	}
-	console.log("HERE",deleteAlbum);
 	$.ajax({
 		url: 'setData.php',
 		type: 'POST',

@@ -1,4 +1,5 @@
 <?php
+	date_default_timezone_set('America/Chicago');
 	function findDirectory($dir){
 	    if(is_dir($dir)){
 		    return $dir;

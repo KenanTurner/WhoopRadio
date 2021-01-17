@@ -364,7 +364,6 @@ function submitTrackForm(deleteTrack = false){
 	}else{
 		console.log("Removed Track",oldTrack);
 	}
-	console.log(track,album);
 	if(deleteTrack){
 		uploadAlbum(album,true,false,"Delete",album.title,oldTrack.title);
 	}else{
