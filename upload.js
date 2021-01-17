@@ -237,7 +237,6 @@ function quickUpdate(album,artworkUrl="",artist="",genre=""){
     uploadAlbum(album);
 }
 function uploadAlbum(album,displayToUser = false,deleteAlbum = false,...logging){
-	//console.log(album);
 	let tmpAlbum = Album.fromJson(JSON.stringify(album));
 	tmpAlbum.sort();
 	var callback = function(data){
@@ -266,11 +265,5 @@ function uploadAllAlbums(){
 		uploadAlbum(album,false,false,"Upload",album.title);
 	});
 }
-
-/*examples
- * getYTPlaylist("PLplWQWlFS075ub5htDKmtPOBhn8JXL1YM","DOOM");
- * getYTPlaylist("PL66C3A99730C3F3F2","Minish Cap");
- * getYTVideo("https://youtu.be/B7T9t5Swu0c?list=PL66C3A99730C3F3F2",mm.data[0])
- */
 
 
