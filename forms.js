@@ -3,6 +3,9 @@ function showMenu(id="settings-menu",...args){
 	menu.style.display = "block";
 	document.body.style.overflow = "hidden";
 	window.addEventListener("click", menuEvent);
+	if(iOS){
+		window.addEventListener("touchstart", menuEvent);
+	}
 	if(id=="settings-menu"){
 		return loadSettingsMenu(mm.usrPrefs.customSettings);
 	}

@@ -37,7 +37,6 @@ body {
     margin: 0;
     padding: 0;
     -webkit-touch-callout: none !important;
-    cursor:pointer;
 }
 
 .album-header {
