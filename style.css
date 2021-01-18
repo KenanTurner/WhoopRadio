@@ -36,7 +36,8 @@ body {
     font-family: 'Crimson Text', 'Georgia', serif;
     margin: 0;
     padding: 0;
-    
+    -webkit-touch-callout: none !important;
+    cursor:pointer;
 }
 
 .album-header {
@@ -313,6 +314,7 @@ body {
     display: grid;
     width: 100%;
     grid-template-columns: min-content minmax(0,100%) min-content;
+    
 }
 .track:hover {
     background-color: var(--highlight-color);
@@ -329,6 +331,7 @@ body {
     box-sizing: border-box;
     padding: 10px;
     padding-right: 11px;
+    
 }
 
 .album {
@@ -336,6 +339,7 @@ body {
     border-width: 1px;
     border-color: #ffffff;
     border-radius: 15px;
+    
 }
 .album-title{
     font-size: calc(var(--sq-album-mobile)*0.09);
@@ -344,6 +348,7 @@ body {
     padding-right: 10px;
     padding-bottom: 10px;
     padding-top: 0px;
+    
 }
 .album-title .subtitle{
     font-size: 20px;

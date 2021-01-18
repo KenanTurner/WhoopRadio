@@ -10,7 +10,7 @@
 		<script type="text/javascript" src="upload.js"></script>
 		<link rel="stylesheet" href="style.css">
 	</head>
-	<body>
+	<body onclick="void(0)">
 		<div class="menu-bg" id="settings-menu">
 			<div class="menu-content">
 				<form onreset="resetSettingsMenu();return true;" id="settings-form">
