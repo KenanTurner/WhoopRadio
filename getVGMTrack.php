@@ -21,12 +21,7 @@
 		return $data;
 	}
 	
-	/*echo getSrc("https://downloads.khinsider.com/game-soundtracks/album/legend-of-zelda-the-30th-anniversary-concert/1-01%2520Hyrule%2520Castle.mp3");
-	echo getSrc("https://downloads.khinsider.com/game-soundtracks/album/legend-of-zelda-the-30th-anniversary-concert/1-02%2520Zelda%2527s%2520Theme.mp3");
-	echo getSrc("https://downloads.khinsider.com/game-soundtracks/album/legend-of-zelda-the-30th-anniversary-concert/1-03%2520The%2520Wind%2520Waker%2520Medley.mp3");
-	* */
 	$data = getSrc("https://downloads.khinsider.com".$url);
-	//print_r($data);
 	echo stripcslashes(json_encode($data));
 	
 ?>

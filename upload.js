@@ -267,14 +267,14 @@ function uploadAllAlbums(){
 }
 
 function getVGMTrack(track){
-    ajax("test2.php","POST",{'href':track.src},function(response){
+    ajax("getVGMTrack.php","POST",{'href':track.src},function(response){
         let tmp = JSON.parse(response);
         track.src = tmp[tmp.length-1];
     });
 }
 
-function getVGMAlbum(url,callback){
-    ajax("test3.php","POST",{'href':url},function(response){
+function getVGMAlbum(url){
+    ajax("getVGMAlbum.php","POST",{'href':url},function(response){
 		//console.log(response);
         let tmp = JSON.parse(response);
         tmp.forEach(function(track,index,array){
