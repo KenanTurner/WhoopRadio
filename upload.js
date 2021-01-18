@@ -266,4 +266,49 @@ function uploadAllAlbums(){
 	});
 }
 
+function getVGMTrack(track){
+    ajax("test2.php","POST",{'href':track.src},function(response){
+        let tmp = JSON.parse(response);
+        track.src = tmp[tmp.length-1];
+    });
+}
+
+function getVGMAlbum(url,callback){
+    ajax("test3.php","POST",{'href':url},function(response){
+		//console.log(response);
+        let tmp = JSON.parse(response);
+        tmp.forEach(function(track,index,array){
+			array[index] = Track.fromJson(JSON.stringify(track));
+            getVGMTrack(array[index]);
+        });
+        console.log(tmp);
+        convertVGMAlbum(tmp);
+    },false)
+}
+
+function isComplete(obj){
+	failed = false;
+	obj.forEach(function(track){
+		try{
+			let a = new URL(track.src);
+		}catch(e){
+			failed = true;
+		}
+	});
+	if(failed){return false;}
+	return true;
+}
+
+function convertVGMAlbum(obj){
+	if(isComplete(obj)){
+		let tmpAlbum = new Album(promptValue("Please enter the album title"),obj);
+		uploadAlbum(tmpAlbum,true,false);
+	}else{
+		//console.log("100 mill");
+		setTimeout(function () {
+			return convertVGMAlbum(obj);
+		}, 100);
+	}
+}
+
 
