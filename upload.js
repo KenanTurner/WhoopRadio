@@ -267,10 +267,21 @@ function uploadAllAlbums(){
 }
 
 function getVGMTrack(track){
-    ajax("getVGMTrack.php","POST",{'href':track.src},function(response){
-        let tmp = JSON.parse(response);
-        track.src = tmp[tmp.length-1];
-    });
+	return $.ajax({
+		url: "getVGMTrack.php",
+		type: "POST",
+		data: {'href':track.src},
+		success: function(response){
+			let tmp = JSON.parse(response);
+			track.src = tmp[tmp.length-1];
+		},
+		error: function(jqXHR, textStatus, errorThrown){
+			console.log('ERROR: ' + jqXHR.status);
+			setTimeout(function () {
+				return getVGMTrack(track);
+			}, 100);
+		}
+	});
 }
 
 function getVGMAlbum(url){
