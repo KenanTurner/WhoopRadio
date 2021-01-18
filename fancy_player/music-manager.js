@@ -763,7 +763,7 @@ class musicManager {
 			if (this.duration!=Infinity) {
 			   var duration = this.duration
 			   //IOS had a problem with this before
-			   //_player.src = null;
+			   _player.src = "";
 			   _player = null;
 				next(Math.ceil(duration));
 				next = function(){};
