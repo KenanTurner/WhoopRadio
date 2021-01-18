@@ -20,8 +20,9 @@
 		foreach ($links as $link) {
 			if (strpos($link->getAttribute('href'), $a[0]) !== false) {
 				$a[1] = $link->textContent;
-				str_replace("&#8203;", "", $a[1]);
+				str_replace("&#8203;", " ", $a[1]);
 				$a[1] = preg_replace( '/[\x{200B}-\x{200D}]/u', ' ', $a[1]);
+				$a[1] = preg_replace('/\s+/', ' ', $a[1]);
 				break;
 			}
 		}
