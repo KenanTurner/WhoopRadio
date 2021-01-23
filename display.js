@@ -534,7 +534,7 @@ function keyUp(event){
 	if(txtBoxHasFocus()){
 		return;
 	}
-	if(event.which == 32 || event.which == 179) { //play pause: space
+	if(event.which == 32) { //play pause: space
 		mm.togglePlay();
 	}
 	if(event.which == 77) { //mute: m
@@ -597,7 +597,7 @@ function keyUp(event){
 		mm.fastForward(-1*mm.currentTime);
 	}
 }
-//var mediaPause = false;
+var mediaPause = false;
 function keyDown(event){ //media controls
 	if(event.which == 179) { //play pause: space
 		mm.togglePlay();
@@ -619,6 +619,115 @@ function keyDown(event){ //media controls
 	}
 	if(event.which == 176) { //skip track: >
 		mm.findNextTrack(1);
+	}
+}
+
+//https://googlechrome.github.io/samples/media-session/audio.html
+function updateMetadata(currentlyPlaying,imgData) {
+  let track = mm.currentlyPlaying.track;
+  let album = mm.currentlyPlaying.album;
+  let img = track.artwork_url;
+  if(!img || img==""){
+	  img = album.artwork_url;
+  }
+  if(!img || img==""){
+	  img = "images/default-white512x512.png";
+	  //console.log(img);
+  }
+
+  //console.log('Playing ' + track.title + ' track...');
+  navigator.mediaSession.metadata = new MediaMetadata({
+    title: track.title,
+    artist: track.artist,
+    album: album.title,
+    artwork: [{src: img, sizes: '128x128', type: 'image/'+get_url_extension(img) },
+    {src: img, sizes: '256x256', type: 'image/'+get_url_extension(img) },
+    {src: img, sizes: '512x512', type: 'image/'+get_url_extension(img) },]
+    //artwork: [{src: "https://f4.bcbits.com/img/a2045437756_16.jpg", sizes: '256x256', type: 'image/jpg' },]
+    
+    /*artwork: [{src: "images/default-white.png", sizes: '256x256', type: 'image/png' },
+    {src: "images/default-white512x512.png", sizes: '512x512', type: 'image/png' },]*/
+  });
+
+}
+
+/* Position state (supported since Chrome 81) */
+
+function updatePositionState() {
+  if ('setPositionState' in navigator.mediaSession) {
+    //console.log('Updating position state...');
+    //console.log(mm.currentTime,mm.currentDuration);
+    if(mm.currentTime>=mm.currentDuration){
+		navigator.mediaSession.setPositionState({
+			duration: 1.0,
+			playbackRate: 1.0,
+			position: 0.0
+		});
+		return;
+	}
+    navigator.mediaSession.setPositionState({
+      duration: mm.currentDuration,
+      playbackRate: 1.0,
+      position: mm.currentTime
+    });
+  }
+}
+
+function getBase64Image(src, width, height, callback) {
+	const img = new Image();
+	img.crossOrigin = 'Anonymous';
+	img.onload = () => {
+		const canvas = document.createElement('canvas');
+		const ctx = canvas.getContext('2d');
+		let dataURL;
+		canvas.height = width;
+		canvas.width = height;
+		ctx.drawImage(img, 0, 0, width, height);
+		dataURL = canvas.toDataURL();
+	callback(mm.currentlyPlaying,dataURL);
+	console.log("Finished");
+	};
+
+	img.src = src;
+	if (img.complete || img.complete === undefined) {
+		img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+		img.src = src;
+	}
+}
+
+function get_url_extension( url ) {
+    return url.split(/[#?]/)[0].split('.').pop().trim();
+}
+
+function isChromeDesktopOrAndroid(){
+	// please note, 
+	// that IE11 now returns undefined again for window.chrome
+	// and new Opera 30 outputs true for window.chrome
+	// but needs to check if window.opr is not undefined
+	// and new IE Edge outputs to true now for window.chrome
+	// and if not iOS Chrome check
+	// so use the below updated condition
+	var isChromium = window.chrome;
+	var winNav = window.navigator;
+	var vendorName = winNav.vendor;
+	var isOpera = typeof window.opr !== "undefined";
+	var isIEedge = winNav.userAgent.indexOf("Edge") > -1;
+	var isIOSChrome = winNav.userAgent.match("CriOS");
+
+	if (isIOSChrome) {
+	   // is Google Chrome on IOS
+	   return false;
+	} else if(
+	  isChromium !== null &&
+	  typeof isChromium !== "undefined" &&
+	  vendorName === "Google Inc." &&
+	  isOpera === false &&
+	  isIEedge === false
+	) {
+	   return true;
+	} else { 
+	   // not Google Chrome 
+	   return true;
 	}
 }
 

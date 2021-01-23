@@ -388,6 +388,43 @@
 				mm.subscribe(mm._setTrack,updateTitle);
 				mm.subscribe(mm.togglePlay,updateTitle);
 				
+				let useMediaSession = (getCookie("useMediaSession") == 'true');
+				if(useMediaSession==""){
+					console.log("Determining mediaSession usage");
+					if(isChromeDesktopOrAndroid()){
+						useMediaSession = true;
+						setCookie("useMediaSession", true, 365);
+					}else{
+						useMediaSession = false;
+						setCookie("useMediaSession", false, 365);
+					}
+					console.log("mediaSession:",useMediaSession);
+				}else{
+					console.log("mediaSession:",useMediaSession);
+				}
+				if ('mediaSession' in navigator && useMediaSession) {
+					mm.subscribe(mm._setTrack,updateMetadata);
+					mm.subscribe(mm._updateTime,updatePositionState);
+					mm.subscribe(mm._setDuration,updatePositionState);
+					
+					navigator.mediaSession.setActionHandler('play', function(){
+						mm.play();
+						navigator.mediaSession.playbackState = "playing";
+					});
+					navigator.mediaSession.setActionHandler('pause', function(){
+						mm.pause();
+						navigator.mediaSession.playbackState = "paused";
+					});
+					navigator.mediaSession.setActionHandler('seekbackward', function(){mm.fastForward(-10)});
+					navigator.mediaSession.setActionHandler('seekforward', function(){mm.fastForward(10)});
+					navigator.mediaSession.setActionHandler('previoustrack', function(){mm.findNextTrack(-1)});
+					navigator.mediaSession.setActionHandler('nexttrack', function(){mm.findNextTrack(1)});
+					navigator.mediaSession.setActionHandler('seekto', function(event) {
+						console.log('> User clicked "Seek To" icon.');
+						mm.fastForward(event.seekTime-mm.currentTime);
+					});
+				}
+				
 				//keyboard controls
 				document.addEventListener('keyup', keyUp, false);
 				document.addEventListener('keydown', keyDown, false); //media controls
@@ -400,10 +437,6 @@
 						e.preventDefault();
 					}
 				}, false);
-				//showMenu("track-menu",mm.data[1].track_list[23]);
-				//loadTrackMenu();
-				//showMenu("track-menu",mm.data[0].track_list[0]);
-				//showMenu("album-menu",mm.data[0])
 				
 				//Title
 				var documentTitle = document.title;
