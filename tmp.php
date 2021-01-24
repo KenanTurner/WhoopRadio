@@ -4,7 +4,10 @@
 		<script type="text/javascript" src="jquery-3.5.1.min.js"></script>
 		<script type="text/javascript" src="cookies.js"></script>
 		<script type="text/javascript" src="framework.js"></script>
+		<script type="text/javascript" src="display.js"></script>
+		<script type="text/javascript" src="forms.js"></script>
 		<script type="text/javascript" src="fancy_player/music-manager.js"></script>
+		<script type="text/javascript" src="upload.js"></script>
 	</head>
 	<body>
 		<div style="padding: 16px">
@@ -86,49 +89,6 @@
 			<iframe id="sc-player" width="100%" height="144" scrolling="no" frameborder="no" allow="autoplay"
 			  src="https://w.soundcloud.com/player/?url=;"> <!--Soundcloud embed-->
 			</iframe>
-			<iframe id="tmp-sc" width="100%" height="144" scrolling="no" frameborder="no" allow="autoplay"
-			  src="https://w.soundcloud.com/player/?url=;"> <!--Soundcloud embed-->
-			</iframe>
-			<script>
-				function getTracks(url,folder="Unsorted"){
-					var widgetIframe = document.getElementById('tmp-sc'),widget = SC.Widget(widgetIframe);
-					widget.load(url,{start_track:9999999,callback:function(){
-						console.log('Widget is reloaded.');
-						getSounds(widget,folder);
-					}})
-				}
-				function getSounds(obj,folder="Unsorted"){
-					obj.getSounds(function(currentSound) {
-						//console.log(currentSound[0]);
-						//console.log(currentSound[currentSound.length-1]);
-						var isValid = true;
-						currentSound.forEach(function(sound){
-							if(!sound["permalink_url"]){
-								isValid = false;
-							}
-							//console.log(sound);
-							/*if(!sound["_resource_type"]){
-								console.log(sound["permalink_url"]);
-							}*/
-						} );
-						if(isValid){
-							console.log("done");
-							currentSound.forEach(function(sound){
-								//console.log(sound["permalink_url"]);
-								//scAlbum.push(sound["permalink_url"]);
-								uploadTrack(sound["permalink_url"],folder,false);
-							});
-							
-						}else{
-							console.log("100 mill");
-							setTimeout(function () {
-								return getSounds(obj,folder);
-							}, 100);
-						}
-					//mm._SCAudio.load(currentSound[72]["permalink_url"]);
-					})
-				}
-			</script>
 			<script>
 				var trackType = getLocalStorage('trackType',true);
 				if(trackType==null){
@@ -145,6 +105,14 @@
 				var tmpUsrPref = new UserPreferences([],[]);
 				window.mm = new musicManager(data,tmpUsrPref,'html-player','sc-player','yt-player','fancy_player/SoundcloudApi.js','fancy_player/YoutubeApi.js');
 			</script>
+			<script>
+				function getURL(url){
+					document.getElementById('frame').src 
+					   = 'proxyscript.php?url='+encodeURIComponent(url);
+				}
+			</script>
+			<button onclick="getURL( 'https://www.youtube.com/watch?v=XcadVpgmfXQ&list=PLvNp0Boas723CiuhA_qJDad2r1XmAZaBw&index=1')">Google</button>
+			<iframe id="frame" src=""></iframe>
 		</div>
 	</body>
 </html>
