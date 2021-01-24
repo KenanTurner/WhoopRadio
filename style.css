@@ -166,7 +166,7 @@ body {
 
 .sq-img {
     width: 100%;
-    /*height: 100%;*/
+    height: 100%;
     object-fit: cover;
     border-radius: calc(var(--sq-img-mobile)*0.12);
     vertical-align: middle;
