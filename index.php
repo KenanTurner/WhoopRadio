@@ -406,14 +406,26 @@
 					mm.subscribe(mm._setTrack,updateMetadata);
 					mm.subscribe(mm._updateTime,updatePositionState);
 					mm.subscribe(mm._setDuration,updatePositionState);
+					mm.subscribe(mm.play,function(isPlaying){
+						if(isPlaying){
+							navigator.mediaSession.playbackState = "playing";
+						}else{
+							navigator.mediaSession.playbackState = "paused";
+						}
+					});
+					mm.subscribe(mm.pause,function(isPlaying){
+						if(isPlaying){
+							navigator.mediaSession.playbackState = "playing";
+						}else{
+							navigator.mediaSession.playbackState = "paused";
+						}
+					});
 					
 					navigator.mediaSession.setActionHandler('play', function(){
 						mm.play();
-						navigator.mediaSession.playbackState = "playing";
 					});
 					navigator.mediaSession.setActionHandler('pause', function(){
 						mm.pause();
-						navigator.mediaSession.playbackState = "paused";
 					});
 					navigator.mediaSession.setActionHandler('seekbackward', function(){mm.fastForward(-10)});
 					navigator.mediaSession.setActionHandler('seekforward', function(){mm.fastForward(10)});
