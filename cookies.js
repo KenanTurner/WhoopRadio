@@ -52,6 +52,12 @@ function setCookie(cname, cvalue, exdays) {
   var expires = "expires="+ d.toUTCString();
   document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
 }
+function deleteCookie(cname) {
+  var d = new Date();
+  d.setTime(d.getTime() + (-1*24*60*60*1000)); //expires yesterday
+  var expires = "expires="+ d.toUTCString();
+  document.cookie = cname + "=;"+ expires + ";path=/";
+}
 
 function logCustomUser(id,page) {
     $.ajax({

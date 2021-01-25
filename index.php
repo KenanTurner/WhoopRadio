@@ -388,53 +388,63 @@
 				mm.subscribe(mm._setTrack,updateTitle);
 				mm.subscribe(mm.togglePlay,updateTitle);
 				
-				let useMediaSession = (getCookie("useMediaSession") == 'true');
-				if(useMediaSession==""){
-					console.log("Determining mediaSession usage");
-					if(isChromeDesktopOrAndroid()){
-						useMediaSession = true;
-						setCookie("useMediaSession", true, 365);
-					}else{
-						useMediaSession = false;
-						setCookie("useMediaSession", false, 365);
+				deleteCookie("useMediaSession");
+				if ('mediaSession' in navigator) {
+					console.log("Using mediaSession");
+					try{
+						mm.subscribe(mm._setTrack,updateMetadata);
+					}catch(e){
+						console.log("mediaSession metadata is unsupported");
 					}
-					console.log("mediaSession:",useMediaSession);
-				}else{
-					console.log("mediaSession:",useMediaSession);
-				}
-				if ('mediaSession' in navigator && useMediaSession) {
-					mm.subscribe(mm._setTrack,updateMetadata);
-					mm.subscribe(mm._updateTime,updatePositionState);
-					mm.subscribe(mm._setDuration,updatePositionState);
-					mm.subscribe(mm.play,function(isPlaying){
-						if(isPlaying){
-							navigator.mediaSession.playbackState = "playing";
-						}else{
-							navigator.mediaSession.playbackState = "paused";
-						}
-					});
-					mm.subscribe(mm.pause,function(isPlaying){
-						if(isPlaying){
-							navigator.mediaSession.playbackState = "playing";
-						}else{
-							navigator.mediaSession.playbackState = "paused";
-						}
-					});
+					try{
+						mm.subscribe(mm._updateTime,updatePositionState);
+						mm.subscribe(mm._setDuration,updatePositionState);
+					}catch(e){
+						console.log("mediaSession positionState is unsupported");
+					}
+					try{
+						mm.subscribe(mm.play,function(isPlaying){
+							if(isPlaying){
+								navigator.mediaSession.playbackState = "playing";
+							}else{
+								navigator.mediaSession.playbackState = "paused";
+							}
+						});
+						mm.subscribe(mm.pause,function(isPlaying){
+							if(isPlaying){
+								navigator.mediaSession.playbackState = "playing";
+							}else{
+								navigator.mediaSession.playbackState = "paused";
+							}
+						});
+					}catch(e){
+						console.log("mediaSession playbackState is unsupported");
+					}
 					
-					navigator.mediaSession.setActionHandler('play', function(){
-						mm.play();
-					});
-					navigator.mediaSession.setActionHandler('pause', function(){
-						mm.pause();
-					});
-					navigator.mediaSession.setActionHandler('seekbackward', function(){mm.fastForward(-10)});
-					navigator.mediaSession.setActionHandler('seekforward', function(){mm.fastForward(10)});
-					navigator.mediaSession.setActionHandler('previoustrack', function(){mm.findNextTrack(-1)});
-					navigator.mediaSession.setActionHandler('nexttrack', function(){mm.findNextTrack(1)});
-					navigator.mediaSession.setActionHandler('seekto', function(event) {
-						console.log('> User clicked "Seek To" icon.');
-						mm.fastForward(event.seekTime-mm.currentTime);
-					});
+					try{
+						navigator.mediaSession.setActionHandler('play', function(){
+							mm.play();
+						});
+						navigator.mediaSession.setActionHandler('pause', function(){
+							mm.pause();
+						});
+					}catch(e){
+						console.log("mediaSession play/pause is unsupported");
+					}
+					try{
+						navigator.mediaSession.setActionHandler('seekbackward', function(){mm.fastForward(-10)});
+						navigator.mediaSession.setActionHandler('seekforward', function(){mm.fastForward(10)});
+						navigator.mediaSession.setActionHandler('previoustrack', function(){mm.findNextTrack(-1)});
+						navigator.mediaSession.setActionHandler('nexttrack', function(){mm.findNextTrack(1)});
+						navigator.mediaSession.setActionHandler('seekto', function(event) {
+							console.log('> User clicked "Seek To" icon.');
+							mm.fastForward(event.seekTime-mm.currentTime);
+						});
+					}catch(e){
+						console.log("mediaSession extras is unsupported");
+					}
+				}else{
+					console.log("mediaSession is unsupported");
 				}
 				
 				//keyboard controls
