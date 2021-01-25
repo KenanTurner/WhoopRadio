@@ -111,7 +111,7 @@
 					   = 'proxyscript.php?url='+encodeURIComponent(url);
 				}
 			</script>
-			<button onclick="getURL( 'https://www.youtube.com/watch?v=XcadVpgmfXQ&list=PLvNp0Boas723CiuhA_qJDad2r1XmAZaBw&index=1')">Google</button>
+			<button onclick="getURL( 'https://www.youtube.com/embed/?enablejsapi=1&origin=https%3A%2F%2Fcrusaderradio.net&widgetid=2')">Google</button>
 			<iframe id="frame" src=""></iframe>
 		</div>
 	</body>

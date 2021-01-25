@@ -1,7 +1,7 @@
 <?php
     header("Access-Control-Allow-Origin: *");
 
-    echo get_page($_GET['url']);
+    $html = get_page($_GET['url']);
     //echo get_page("http://www.google.com");
     function get_page($url){
         $ch = curl_init();
@@ -19,5 +19,40 @@
         curl_close($ch);
         return $data;
     }
-    //echo "E";
+    
+    /*$dom = new DOMDocument;  
+	libxml_use_internal_errors(true);
+
+	$dom->loadHTML( $html ); 
+	$xpath = new DOMXPath( $dom );
+	libxml_clear_errors();
+
+	$doc = $dom->getElementsByTagName("html")->item(0);
+	$src = $xpath->query(".//@src");
+
+	foreach ( $src as $s ) {
+	  //$s->nodeValue = array_pop( explode( "/", $s->nodeValue ) );
+	  $s->nodeValue = "https://www.youtube.com".$s->nodeValue;
+	  //echo $s->nodeValue;
+	}
+	$output = $dom->saveXML( $doc );*/
+	$dom = new DOMDocument;  
+	libxml_use_internal_errors(true);
+
+	$dom->loadHTML( $html ); 
+	$h1 = $dom->getElementsByTagName("script");
+	//$hrefs = array();
+	//echo count($h1);
+	foreach ($h1 as $h) {
+		$tmp = $h->getAttribute('src');
+		if($tmp==NULL){
+			continue;
+		}
+		$tmp = "https://www.youtube.com".$tmp;
+		$h->setAttribute('src',$tmp);
+		//echo $h->getAttribute('src');
+		//echo trim($tmpJson["trackinfo"][0]["file"]["mp3-128"]);
+	}
+	//echo "Pain";
+    echo $dom->saveHTML();
 ?>
