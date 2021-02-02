@@ -73,5 +73,5 @@
     $album[2] = "";
     $album[3] = "";
     $album[4] = $album[1][0][6];
-    echo stripslashes(json_encode($album));
+    echo json_encode($album,JSON_UNESCAPED_SLASHES);
 ?>

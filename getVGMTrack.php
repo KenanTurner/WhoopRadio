@@ -22,6 +22,6 @@
 	}
 	
 	$data = getSrc("https://downloads.khinsider.com".$url);
-	echo stripcslashes(json_encode($data));
+	echo json_encode($data,JSON_UNESCAPED_SLASHES);
 	
 ?>

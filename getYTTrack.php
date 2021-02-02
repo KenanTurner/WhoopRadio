@@ -50,5 +50,5 @@
         $artwork_url = $data->snippet->thumbnails->default->url;
     }
     $track[6] = $artwork_url;
-    echo stripslashes(json_encode($track));
+    echo json_encode($track,JSON_UNESCAPED_SLASHES);
 ?>

@@ -225,6 +225,7 @@ function uploadNewAlbum(){
 	console.log(src,filetype,album,albumTitle);
 	switch(filetype){
 		case "YT":
+			console.log(src,albumTitle,album);
 			getYTPlaylist(src,albumTitle,album);
 			break;
 		case "SC":

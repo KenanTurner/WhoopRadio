@@ -46,6 +46,7 @@ function ajaxJsonPlaylist(response,album=false){
 		if(tmp.track_list.length == 0){
 			throw "single_track"
 		}
+		
 		if(album){
 			album = Album.fromJson(JSON.stringify(album));
 			tmp.track_list.forEach(function(track){
@@ -97,7 +98,10 @@ function DEPRECIATEDgetYTPlaylist(id,callback = printThing){
 	uploadYT.cuePlaylist({listType:'playlist',list: id,index:0,startSeconds:0});
 }
 function getYTPlaylist(id,albumTitle,album=false){
-	ajax('getYTPlaylist.php','POST',{'id':id,'albumTitle':albumTitle},function(response){ajaxJsonPlaylist(response,album)},true);
+	ajax('getYTPlaylist.php','POST',{'id':id,'albumTitle':albumTitle},function(response){
+		window.response = response;
+		ajaxJsonPlaylist(response,album);
+	},true);
 }
 function getYTTrack(id,album){
 	ajax('getYTTrack.php','POST',{'id':id},function(response){ajaxJsonTrack(response,album)},true);
