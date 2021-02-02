@@ -98,10 +98,7 @@ function DEPRECIATEDgetYTPlaylist(id,callback = printThing){
 	uploadYT.cuePlaylist({listType:'playlist',list: id,index:0,startSeconds:0});
 }
 function getYTPlaylist(id,albumTitle,album=false){
-	ajax('getYTPlaylist.php','POST',{'id':id,'albumTitle':albumTitle},function(response){
-		window.response = response;
-		ajaxJsonPlaylist(response,album);
-	},true);
+	ajax('getYTPlaylist.php','POST',{'id':id,'albumTitle':albumTitle},function(response){ajaxJsonPlaylist(response,album)},true);
 }
 function getYTTrack(id,album){
 	ajax('getYTTrack.php','POST',{'id':id},function(response){ajaxJsonTrack(response,album)},true);
