@@ -366,6 +366,7 @@
 				var tmpUsrPref = new UserPreferences([],[],CustomSettings.fromJson(JSON.stringify(customSettings)));
 				var data = <?php include "getData.php";?>;
 				
+				//Liked album
 				var liked_album = getLocalStorage("liked_album");
 				if(liked_album != ""){
 					liked_album = Album.fromJson(liked_album);
@@ -400,7 +401,6 @@
 				mm.subscribe(mm._setTrack,updateTitle);
 				mm.subscribe(mm.togglePlay,updateTitle);
 				
-				deleteCookie("useMediaSession");
 				if ('mediaSession' in navigator) {
 					console.log("Using mediaSession");
 					try{
@@ -476,15 +476,38 @@
 				var documentTitle = document.title;
 				
 				//mobile check
-				if(musicManager.mobileAndTabletCheck()){
-					var firstVisit = getCookie("firstVisit");
+				/*if(musicManager.mobileAndTabletCheck()){
 					if (firstVisit == ""){
 						console.log("First Visit");
 						setCookie("firstVisit", false, 365);
 						console.log("Mobile user");
 						alert('You are using the mobile version of this site. For full functionality, switch to the desktop version');
 					}
+				}*/
+				
+				//Version Check
+				var current_version = getCookie("current_version");
+				if(current_version == ""){ //First Visit or updating systems
+					current_version = document.getElementById("version_log").lastElementChild.innerText;
+					setCookie("current_version",current_version,365);
+					if(getCookie("firstVisit") != ""){
+						alert("Update Completed:\n"+current_version);
+					}else{
+						console.log("First Visit");
+						if(musicManager.mobileAndTabletCheck()){
+							console.log("Mobile user");
+							alert('You are using the mobile version of this site. For full functionality, switch to the desktop version');
+						}
+					}					
+				}else if(current_version != document.getElementById("version_log").lastElementChild.innerText){
+					current_version = document.getElementById("version_log").lastElementChild.innerText;
+					alert("Update Completed:\n"+current_version);
+					setCookie("current_version",current_version,365);
 				}
+				
+				//Remove depreciated cookies
+				deleteCookie("useMediaSession");
+				deleteCookie("firstVisit");
 				
 			</script>
 			<div id="tmp-yt"></div> <!--Youtube embed-->
