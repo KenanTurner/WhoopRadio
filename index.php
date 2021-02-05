@@ -370,7 +370,7 @@
 				if(liked_album != ""){
 					liked_album = Album.fromJson(liked_album);
 				}else{
-					liked_album = new Album("Liked Tracks",[],"","Liked Tracks","images/heart-white.png");
+					liked_album = new Album("Liked Tracks",[],"is_liked_album","Favorites","images/heart-white.png");
 					uploadAlbum(liked_album);
 					console.log("creating new liked_album");
 				}
