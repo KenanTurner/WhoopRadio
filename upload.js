@@ -238,6 +238,17 @@ function quickUpdate(album,artworkUrl="",artist="",genre=""){
     uploadAlbum(album);
 }
 function uploadAlbum(album,displayToUser = false,deleteAlbum = false,...logging){
+	if(album.description == "is_liked_album"){
+		if(deleteAlbum){
+			album = new Album("Liked Tracks",[],"","Favorites","images/heart-white.png");
+		}
+		setLocalStorage("liked_album", album, true);
+		console.log("Updated liked album",album);
+		if(displayToUser){
+			alert("Uploaded Successfully. Refresh the page to see changes.");
+		}
+		return;
+	}
 	let tmpAlbum = Album.fromJson(JSON.stringify(album));
 	tmpAlbum.sort();
 	var callback = function(data){

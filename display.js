@@ -1,20 +1,24 @@
 function showTracks(album_div){
 	hideTracks();
+	
+	let album = divElementToAlbum(album_div);
 	let tmp = document.getElementsByClassName("album-container")[0];
 	tmp.classList.add("show-tracks");
 	album_div.children[2].classList.add("show-tracks");
 	window.scrollTo(0, 0);
+	var t = new Timer(true);
 	for(let tracks of album_div.children[2].children){
 		if(!tracks.children[2].children[0].src){ //lazyloading
 			tracks.children[0].children[0].src = tracks.children[0].children[0].dataset.lazysrc;
-			tracks.children[2].children[0].src = "images/heart-white.png";
+			//tracks.children[2].children[0].src = "images/heart-white.png";
+			tracks.children[2].children[0].src = tracks.children[2].children[0].dataset.lazysrc;
 		}
 	}
 	updateCurrentlyPlaying();
 	document.getElementsByClassName("album-header")[0].classList.add("show-tracks");
 	tmp = document.getElementsByClassName("track-header")[0];
 	tmp.classList.add("show-tracks");
-	let album = divElementToAlbum(album_div);
+	
 	tmp.children[1].children[0].innerText = album.title;
 	tmp.children[1].children[1].innerText = album.getArtists();
 	if(!album.getArtists()){
@@ -172,6 +176,9 @@ function updateCurrentlyPlaying(){
 		trackElement.children[1].children[1].innerText = album.title;
 	}
 	trackElement.children[2].children[0].src = "images/heart-white.png";
+	if(liked_album.hasLikedTrack(Track.fromJson(JSON.stringify(track))) != -1){
+		trackElement.children[2].children[0].src = "images/heart-highlight.png";
+	}
 	let oldElement = document.getElementById("currently-playing-track");
 	var fragment = new DocumentFragment();
 	if(oldElement){
@@ -387,6 +394,23 @@ function loadEventListeners(){
 			track.children[2].addEventListener('click', function(e) {
 				//console.log(divElementToTrack(e.target));
 				//alert("Liked");
+				let track = Track.fromJson(JSON.stringify(divElementToTrack(e.target)));
+				let album = divElementToAlbum(e.target);
+				if(track.artwork_url == ""){
+					track.artwork_url = album.artwork_url;
+				}
+				if(track.artwork_url == ""){
+					track.artwork_url = "images/default-white.png";
+				}
+				track.track_num = -1;
+				//console.log("Liked",track);
+				let index = liked_album.hasLikedTrack(track);
+				if(index == -1){
+					liked_album.addTrack(track);
+				}else{
+					liked_album.track_list.splice(index,1);
+				}
+				uploadAlbum(liked_album,true);
 			});
 			
 		}
@@ -405,11 +429,13 @@ function loadEventListeners(){
 		album.children[0].addEventListener('click', function(e) {
 			//console.log(divElementToAlbum(e.target));
 			//alert("Playing");
+			let album = divElementToAlbum(e.target);
 			showTracks(getParentDivByClass(e.target,"album"));
 		});
 		album.children[1].addEventListener('click', function(e) {
 			//console.log(divElementToAlbum(e.target));
 			//alert("Playing");
+			let album = divElementToAlbum(e.target);
 			showTracks(getParentDivByClass(e.target,"album"));
 		});
 		album.children[0].addEventListener('contextmenu', function(e) {
@@ -448,6 +474,24 @@ function loadEventListeners(){
 	});
 	trackElement.children[2].addEventListener('click', function(e) {
 		//alert("Liked");
+		let track = Track.fromJson(JSON.stringify(mm.currentlyPlaying.track));
+		let album = mm.currentlyPlaying.album;
+		if(track.artwork_url == ""){
+			track.artwork_url = album.artwork_url;
+		}
+		if(track.artwork_url == ""){
+			track.artwork_url = "images/default-white.png";
+		}
+		console.log(track.artwork_url);
+		track.track_num = -1;
+		//console.log("Liked",track);
+		let index = liked_album.hasLikedTrack(track);
+		if(index == -1){
+			liked_album.addTrack(track);
+		}else{
+			liked_album.track_list.splice(index,1);
+		}
+		uploadAlbum(liked_album,true);
 	});
 }
 function iOS() {

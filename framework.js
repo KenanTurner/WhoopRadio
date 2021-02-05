@@ -75,7 +75,7 @@ class Album{
 			track_container.setAttributeNode(att);
 				let self = this;
 				this.track_list.forEach(function(track){
-					track_container.appendChild(track.toHTML(self.title,self.artwork_url));
+					track_container.appendChild(track.toHTML(self));
 				});
 			album.appendChild(track_container);
 		return album;
@@ -242,6 +242,16 @@ class Album{
 			return false;
 		}
 	}
+	hasLikedTrack(track){
+		var i;
+		for (i = 0; i < this.track_list.length; i++) {
+			let comparison_track = Track.fromJson(JSON.stringify(this.track_list[i]));
+			if (comparison_track.title === track.title && comparison_track.src === track.src) {
+				return i;
+			}
+		}
+		return -1;
+	}
 	findTrack(track){
 		let index = containsObject(track,this.track_list);
 		if(index != -1){
@@ -277,7 +287,8 @@ class Track{
 		var obj = JSON.parse (json);
 		return new Track(...obj);
 	}
-	toHTML(album_title,album_artwork="images/default.png"){
+	//toHTML(album_title,album_artwork="images/default.png"){
+	toHTML(album){
 		let track = document.createElement("div");
 		let att = document.createAttribute("class");
 		att.value = "track";
@@ -297,8 +308,8 @@ class Track{
 				img.setAttributeNode(att);
 				att = document.createAttribute("data-lazysrc");
 				//TODO find parent album
-				att.value = album_artwork;
-				if(!album_artwork){
+				att.value = album.artwork_url;
+				if(!album.artwork_url){
 					att.value = "images/default-white.png";
 				}
 				if(this.artwork_url){
@@ -323,7 +334,7 @@ class Track{
 				txt_line.innerText = this.title;
 					//extra data
 					att = document.createAttribute("data-album");
-					att.value = album_title;
+					att.value = album.title;
 					txt_line.setAttributeNode(att);
 				txt_box.appendChild(txt_line);
 				//album or artist
@@ -331,7 +342,7 @@ class Track{
 				att = document.createAttribute("class");
 				att.value = "txt-line subtitle";
 				txt_line.setAttributeNode(att);
-				txt_line.innerText = album_title;
+				txt_line.innerText = album.title;
 				if(this.artist){
 					txt_line.innerText = this.artist;
 				}
@@ -348,7 +359,10 @@ class Track{
 				att.value = "sq-img";
 				img.setAttributeNode(att);
 				att = document.createAttribute("data-lazysrc");
-				att.value = "heart-white.png";
+				att.value = "images/heart-white.png";
+				if(liked_album.hasLikedTrack(this) != -1){
+					att.value = "images/heart-highlight.png";
+				}
 				img.setAttributeNode(att);
 				sq.appendChild(img);
 			track.appendChild(sq);

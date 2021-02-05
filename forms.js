@@ -416,7 +416,7 @@ function submitAlbumForm(deleteAlbum = false){
 	album.setArtists(artists);
 	album.artwork_url = artwork_url;
 	album.genre = genre;
-	if(title != oldAlbum.title){
+	if(title != oldAlbum.title && oldAlbum.description != "is_liked_album"){
 		deleteAlbum = true;
 	}
 	console.log(album);

@@ -365,15 +365,27 @@
 				customSettings.applySettings();
 				var tmpUsrPref = new UserPreferences([],[],CustomSettings.fromJson(JSON.stringify(customSettings)));
 				var data = <?php include "getData.php";?>;
-				var tmpData = JSON.parse(JSON.stringify(data));
+				
+				var liked_album = getLocalStorage("liked_album");
+				if(liked_album != ""){
+					liked_album = Album.fromJson(liked_album);
+				}else{
+					liked_album = new Album("Liked Tracks",[],"","Liked Tracks","images/heart-white.png");
+					uploadAlbum(liked_album);
+					console.log("creating new liked_album");
+				}
+				liked_album.description = "is_liked_album";
+				
 				convertToFramework(data);
+				data.push(liked_album);
 				window.mm = new musicManager(data,tmpUsrPref,'html-player','sc-player','yt-player','fancy_player/SoundcloudApi.js','fancy_player/YoutubeApi.js');
-				mm._sortAlbums()
+				mm._sortAlbums();
 				document.getElementsByClassName("album-container")[0].innerHTML = "";
 				var fragment = new DocumentFragment();
 				mm.data.forEach(function(album){
 					fragment.appendChild(album.toHTML());
 				});
+				
 				document.getElementsByClassName("album-container")[0].appendChild(fragment);
 				loadEventListeners();
 				mm.subscribe(mm._setTrack,updateCurrentlyPlaying);
