@@ -378,6 +378,13 @@
 				liked_album.description = "is_liked_album";
 				
 				convertToFramework(data);
+				//remove phantom liked album
+				data = data.filter(function(album){
+					if(album.description == "is_liked_album"){
+						return false;
+					}
+					return true;
+				});
 				data.push(liked_album);
 				window.mm = new musicManager(data,tmpUsrPref,'html-player','sc-player','yt-player','fancy_player/SoundcloudApi.js','fancy_player/YoutubeApi.js');
 				mm._sortAlbums();
