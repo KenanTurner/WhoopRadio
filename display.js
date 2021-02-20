@@ -640,8 +640,36 @@ function keyUp(event){
 	if(event.which == 96) { //Zero
 		mm.fastForward(-1*mm.currentTime);
 	}
+	if(event.which == 70) { //F
+		//console.log("Fav");
+		let elem = albumToDivElement(liked_album);
+		if(elem.children[2].classList.contains("show-tracks")){
+			hideTracks();
+		}else{
+			showTracks(elem);
+		}
+	}
+	if(event.which == 72) { //H
+		//console.log("Heart");
+		let track = Track.fromJson(JSON.stringify(mm.currentlyPlaying.track));
+		let album = Album.fromJson(JSON.stringify(mm.currentlyPlaying.album));
+		if(track.artwork_url == ""){
+			track.artwork_url = album.artwork_url;
+		}
+		if(track.artwork_url == ""){
+			track.artwork_url = "images/default-white.png";
+		}
+		track.track_num = -1;
+		let index = liked_album.hasLikedTrack(track);
+		if(index == -1){
+			liked_album.addTrack(track);
+		}else{
+			liked_album.track_list.splice(index,1);
+		}
+		uploadAlbum(liked_album,true);
+	}
+	
 }
-var mediaPause = false;
 function keyDown(event){ //media controls
 	if(event.which == 179) { //play pause: space
 		mm.togglePlay();
