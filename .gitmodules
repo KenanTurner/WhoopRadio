@@ -1,0 +1,3 @@
+[submodule "MetaMusic"]
+	path = MetaMusic
+	url = https://github.com/KenanTurner/MetaMusic.git
