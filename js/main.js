@@ -63,12 +63,13 @@ mm.subscribe('loaded',function(e){
 	previous_track = mm._track;
 });
 
+mm.subscribe('timeupdate',function(e){
+	console.log(mm._status);
+});
+
 let album_container = document.getElementById('album-container');
 let track_container = document.getElementById('track-container');
 Album.onClick = function(a){
-	if(a.title == "ABZU" && window.location.href.includes('.github.io/')){
-		return alert("Bandcamp will not work from a static site. See the README for more information.");
-	}
 	while(track_container.firstChild) track_container.removeChild(track_container.lastChild);
 	a.tracks.forEach(function(t){
 		track_container.appendChild(t.toHTML());
@@ -79,9 +80,6 @@ Album.onClick = function(a){
 	mm.load(a.tracks[0]);
 }
 Custom.onClick = function(t){
-	if(t.filetype == "BC" && window.location.href.includes('.github.io/')){
-		return alert("Bandcamp will not work from a static site. See the README for more information.");
-	}
 	let paused = mm._status.paused;
 	mm.load(t).then(function(e){
 		if(!paused) mm.play();
