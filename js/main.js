@@ -8,6 +8,8 @@ import Album from '../js/custom-album.js';
 import MM from '../MetaMusic/src/meta-music.js';
 Object.setPrototypeOf(HTML.Track,Custom); //This is poggers
 Object.setPrototypeOf(HTML.Track.prototype,Custom.prototype); //Like super poggers
+Object.setPrototypeOf(MM,Album); //This is poggers
+Object.setPrototypeOf(MM.prototype,Album.prototype); //Like super poggers
 
 //Now it goes HTML.Track > Custom > Track
 let imports = [HTML,YT,BC,SC,VGM,Custom,Album,MM];
@@ -67,7 +69,6 @@ mm.subscribe('loaded',function(e){
 
 let progress_div = document.getElementById('current-progress');
 mm.subscribe('timeupdate',function(e){
-	//console.log(mm._status);
 	let p = 100*mm._status.time/mm._status.duration;
 	progress_div.style.width = String(p)+"%";
 });
@@ -83,15 +84,20 @@ let album_container = document.getElementById('album-container');
 let track_container = document.getElementById('track-container');
 let previous_album = undefined;
 Album.onClick = function(a){
-	if(previous_album) Album.onUnload(previous_album);
-	Album.onLoad(a);
-	mm.stop();
-	mm.clear();
-	mm.push(a);
-	mm.load(a.tracks[0]);
-	previous_album = a;
+	if(previous_album) Album.onClose(previous_album);
+	Album.onOpen(a);
+	window.history.pushState(a.toJSON(),'','#'+encodeURI(a.title));
 }
-Album.onUnload = function(a){
+//Soundcloud causes huge issues :(
+Album.onBack = function(a){
+	if(window.history.state){
+		window.history.back();
+	}else{
+		window.history.pushState(a.toJSON(),'','#'+encodeURI(a.title));
+		window.history.back();
+	}
+}
+Album.onClose = function(a){
 	album_container.style.display = 'grid';
 	window.scrollTo(0, 0);
 	while(track_container.firstChild) track_container.removeChild(track_container.lastChild);
@@ -99,14 +105,31 @@ Album.onUnload = function(a){
 		t.elements.length = 0; //May cause issues later
 	});
 }
-Album.onLoad = function(a){
+Album.onOpen = function(a){
 	album_container.style.display = 'none';
 	window.scrollTo(0, 0);
 	track_container.appendChild(a.toAlbumHeader());
 	a.tracks.forEach(function(t){
 		track_container.appendChild(t.toHTML());
+		if(t.equals(mm._track)) Custom.onLoad(t);
 	});
+	previous_album = a;
 }
+Album.onPlay = function(a){
+	mm.stop();
+	mm.clear();
+	mm.push(a);
+	mm.load(a.tracks[0])
+	.then(mm.chain('play'));
+}
+window.addEventListener('popstate', function(e){
+	if(previous_album) Album.onClose(previous_album);
+  if(e.state){
+		let a = albums.find(function(tmp){return tmp.equals(e.state)})
+		Album.onOpen(a);
+	}
+});
+
 Custom.onClick = function(t){
 	let paused = mm._status.paused;
 	mm.load(t).then(function(e){
@@ -192,8 +215,22 @@ if ('mediaSession' in navigator) {
 
 //load albums
 fetch("./php/get-albums.php").then(function(r){return r.json()}).then(function(arr){
+	window.albums = [];
 	arr.forEach(function(data){
 		let a = new Album(data);
+		albums.push(a);
 		album_container.appendChild(a.toHTML());
 	});
+	if(window.location.hash){
+		if(window.history.state){
+			Album.onOpen(new Album(window.history.state));//this will cause problems
+		}else{
+			//We need to create a new event?
+			let tmp = window.location.hash.substring(1);
+			let title = decodeURI(tmp);
+			albums.forEach(function(a){
+				if(a.title == title) Album.onOpen(a);
+			});
+		}
+	}
 });

@@ -3,10 +3,12 @@ export default class Album extends A{
 	constructor(obj){
 		super(obj);
 		this.artwork_url = obj.artwork_url;
+		this.src = obj.src;
 	}
 	toJSON(){ //serialization
 		let obj = super.toJSON();
 		obj.artwork_url = this.artwork_url;
+		obj.src = this.src;
 		return obj;
 	}
 	static fromJSON(json){ //deserialization
@@ -41,18 +43,14 @@ export default class Album extends A{
 		track_div.classList.add('track');
 		track_div.classList.add('album-header');
 		track_div.title = this.title;
-			let bg_img_div = document.createElement('div');
-			bg_img_div.classList.add('bg-img-container');
-				let bg_img = document.createElement('div');
-				bg_img.classList.add('bg-img');
-				bg_img.style.backgroundImage = 'url('+ this.artwork_url || "./images/default-white.png" +');';
-				bg_img_div.appendChild(bg_img);
-			//track_div.appendChild(bg_img_div);
 			let track_img_div = document.createElement('div');
 			track_img_div.classList.add('track-img-container');
 				let track_img = document.createElement('img');
 				track_img.classList.add('track-img');
-				track_img.src = this.artwork_url || "./images/default-white.png";
+				track_img.src = "./images/back-white-drop.png";
+				track_img.addEventListener('click',function(e){
+					this.constructor.onBack(this);
+				}.bind(this));
 				track_img_div.appendChild(track_img);
 			track_div.appendChild(track_img_div);
 			let track_text_div = document.createElement('div');
@@ -66,16 +64,33 @@ export default class Album extends A{
 				track_subtitle.innerText = this.src;
 				track_text_div.appendChild(track_subtitle);
 			track_div.appendChild(track_text_div);
-		track_div.addEventListener('click',function(e){
-			this.constructor.onUnload(this);
-		}.bind(this));
+			let play_img_div = document.createElement('div');
+			play_img_div.classList.add('track-img-container');
+				let play_img = document.createElement('img');
+				play_img.classList.add('track-img');
+				play_img.src = "./images/play-white.png";
+				play_img.addEventListener('click',function(e){
+					this.constructor.onPlay(this);
+				}.bind(this));
+				play_img_div.appendChild(play_img);
+			track_div.appendChild(play_img_div);
+			let bg_img_div = document.createElement('div');
+			bg_img_div.classList.add('bg-img-container');
+				let bg_img = document.createElement('div');
+				bg_img.classList.add('bg-img');
+				bg_img.style.backgroundImage = 'url(' + this.artwork_url + ')';
+				if(!this.artwork_url) bg_img.style.background = '#303030';
+				bg_img_div.appendChild(bg_img);
+			track_div.appendChild(bg_img_div);
 		//this.elements.push(track_div);
 		return track_div;
 	}
 	//to be overloaded later
 	static onClick(){}
-	static onLoad(){}
-	static onUnload(){}
+	static onBack(){}
+	static onOpen(){}
+	static onClose(){}
+	static onPlay(){}
 	static uploadAlbum(o){
 		let a = new Album(o);
 		if(o.clone) a = o.clone();

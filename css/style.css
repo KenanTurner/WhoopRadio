@@ -143,12 +143,12 @@ footer {
 	border-radius: 5px;
 }
 .track-text-container {
-	width: 90%;
 	box-sizing: border-box;
 	padding: 5px;
 	padding-left: 10px;
 	display: flex;
 	flex-direction: column;
+	max-width: 85%;
 }
 .track-title {
 	color: #ffffff;
@@ -169,22 +169,29 @@ footer {
 
 /* Album Header */
 .album-header {
-
+		flex-wrap: wrap;
+		border-style: solid;
+		border-width: 0px;
+		border-bottom-width: 1px;
+}
+.album-header >:nth-child(n+3):not(.bg-img-container) {
+		margin-left: auto;
+}
+.album-header .track-title {
+		text-shadow: 2px 2px 2px #000000;
+}
+.album-header .track-subtitle {
+		text-shadow: 2px 2px 2px #000000;
 }
 .bg-img-container {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    right: 0px;
-    bottom: 0px;
     width: 100%;
     height: 100%;
     overflow: hidden;
     z-index: -1;
+		margin-top: -60px;
 }
 .bg-img {
     display: block;
-    position: absolute;
     /* background-image: none; */
     filter: blur(10px);
     -webkit-filter: blur(10px);
