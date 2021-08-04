@@ -46,11 +46,6 @@ export default class Track extends _Track{
 		this.elements.push(track_div);
 		return track_div;
 	}
-	updateHTML(){
-		this.elements.forEach(function(el){
-			el.innerText = this.title;
-		}.bind(this));
-	}
 	//to be overloaded later
 	static onClick(){}
 	static onLoad(){}

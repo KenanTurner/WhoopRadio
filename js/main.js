@@ -15,6 +15,8 @@ function map(arr,obj={},f=function(i){return i}){arr.forEach(function(i){if(i.na
 map(imports,window);
 console.log("Loaded");
 
+window.map = function(arr,obj={},f=function(i){return i}){arr.forEach(function(i){if(i.name) this[i.name] = f(i)}.bind(obj));return obj;}
+
 MetaMusic.players = {"HTML":HTML,"YT":YT,"SC":SC,"BC":BC,"VGM":VGM};
 window.mm = new MetaMusic();
 //TODO fix BC constructor
@@ -63,21 +65,47 @@ mm.subscribe('loaded',function(e){
 	previous_track = mm._track;
 });
 
+let progress_div = document.getElementById('current-progress');
 mm.subscribe('timeupdate',function(e){
-	console.log(mm._status);
+	//console.log(mm._status);
+	let p = 100*mm._status.time/mm._status.duration;
+	progress_div.style.width = String(p)+"%";
+});
+
+//make progress bar clickable
+let progress_container = document.getElementById('progress-container');
+progress_container.addEventListener('click',function(e){
+	let p = e.offsetX/progress_container.offsetWidth;
+	mm.seek(mm._status.duration*p);
 });
 
 let album_container = document.getElementById('album-container');
 let track_container = document.getElementById('track-container');
+let previous_album = undefined;
 Album.onClick = function(a){
-	while(track_container.firstChild) track_container.removeChild(track_container.lastChild);
-	a.tracks.forEach(function(t){
-		track_container.appendChild(t.toHTML());
-	});
+	if(previous_album) Album.onUnload(previous_album);
+	Album.onLoad(a);
 	mm.stop();
 	mm.clear();
 	mm.push(a);
 	mm.load(a.tracks[0]);
+	previous_album = a;
+}
+Album.onUnload = function(a){
+	album_container.style.display = 'grid';
+	window.scrollTo(0, 0);
+	while(track_container.firstChild) track_container.removeChild(track_container.lastChild);
+	a.tracks.forEach(function(t,i,arr){
+		t.elements.length = 0; //May cause issues later
+	});
+}
+Album.onLoad = function(a){
+	album_container.style.display = 'none';
+	window.scrollTo(0, 0);
+	track_container.appendChild(a.toAlbumHeader());
+	a.tracks.forEach(function(t){
+		track_container.appendChild(t.toHTML());
+	});
 }
 Custom.onClick = function(t){
 	let paused = mm._status.paused;
@@ -96,6 +124,73 @@ Custom.onUnload = function(t){
 	});
 }
 
+//keyboard controls
+let keyEvent = function(e,key_code,f,...args){
+	document.addEventListener(e, function(e){
+		if(e.key === key_code && f.name === "") return f(...args);
+		if(e.key === key_code) return mm[f](...args);
+	}, false);
+}
+let keyToggle = function(e,key_code,attr,f,g,...args){
+	document.addEventListener(e, function(e){
+		if(e.key === key_code && mm._status[attr]) return mm[f](...args);
+		if(e.key === key_code && !mm._status[attr]) return mm[g](...args);
+	});
+}
+//prevent defaults
+document.addEventListener("keydown", function(e) {
+	if([' ', 'ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp'].indexOf(e.key) > -1) {
+		e.preventDefault();
+	}
+});
+
+// handle keyboard events
+keyToggle('keyup',' ','paused','play','pause');
+keyToggle('keyup','s','shuffled','unshuffle','shuffle');
+keyEvent('keyup','.','next',1);
+keyEvent('keyup',',','next',-1);
+keyEvent('keydown','ArrowRight','fastForward',5);
+keyEvent('keydown','ArrowLeft','fastForward',-5);
+keyEvent('keyup','ArrowUp',function(){
+	let vol = mm._status.volume+0.1;
+	vol = Math.max(Math.min(vol,1),0)
+	mm.setVolume(vol);
+});
+keyEvent('keyup','ArrowDown',function(){
+	let vol = mm._status.volume-0.1;
+	vol = Math.max(Math.min(vol,1),0)
+	mm.setVolume(vol);
+});
+keyEvent('keyup','m',function(){
+	if(mm._status.volume == 0){
+		mm.setVolume(1);
+	}else{
+ 		mm.setVolume(0);
+	}
+});
+keyEvent('keyup','s','shuffle');
+keyEvent('keyup','0','seek',0);
+
+//Media Session
+if ('mediaSession' in navigator) {
+	console.log("Using mediaSession");
+	//TODO use cool metadata api
+	try{
+		navigator.mediaSession.setActionHandler('play', function(){mm.play();});
+		navigator.mediaSession.setActionHandler('pause', function(){mm.pause();});
+		navigator.mediaSession.setActionHandler('seekbackward', function(){mm.fastForward(-5)});
+		navigator.mediaSession.setActionHandler('seekforward', function(){mm.fastForward(5)});
+		navigator.mediaSession.setActionHandler('previoustrack', function(){mm.next(-1)});
+		navigator.mediaSession.setActionHandler('nexttrack', function(){mm.next(1)});
+		//TODO seekto event
+	}catch(e){
+		console.log("mediaSession extras is unsupported");
+	}
+}else{
+	console.log("mediaSession is unsupported");
+}
+
+//load albums
 fetch("./php/get-albums.php").then(function(r){return r.json()}).then(function(arr){
 	arr.forEach(function(data){
 		let a = new Album(data);
