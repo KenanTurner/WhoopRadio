@@ -4,6 +4,12 @@ export default class Album extends A{
 		super(obj);
 		this.artwork_url = obj.artwork_url;
 		this.src = obj.src;
+		this.elements = [];
+	}
+	clone(){
+		let tmp = this.constructor.fromJSON(JSON.stringify(this));
+		tmp.element = this.element;
+		return tmp;
 	}
 	toJSON(){ //serialization
 		let obj = super.toJSON();
@@ -36,6 +42,7 @@ export default class Album extends A{
 		album_div.addEventListener('click',function(e){
 			this.constructor.onClick(this);
 		}.bind(this));
+		//this.element = album_div;
 		return album_div;
 	}
 	toAlbumHeader(){
@@ -70,7 +77,7 @@ export default class Album extends A{
 				play_img.classList.add('track-img');
 				play_img.src = "./images/play-white.png";
 				play_img.addEventListener('click',function(e){
-					this.constructor.onPlay(this);
+					this.constructor.onLoad(this);
 				}.bind(this));
 				play_img_div.appendChild(play_img);
 			track_div.appendChild(play_img_div);
@@ -85,12 +92,26 @@ export default class Album extends A{
 		//this.elements.push(track_div);
 		return track_div;
 	}
-	//to be overloaded later
+	toTrackContainer(){
+		let track_div = document.createElement('div');
+		track_div.classList.add('track-container');
+		track_div.id = this.title;
+		track_div.appendChild(this.toAlbumHeader());
+		this.tracks.forEach(function(t){
+			track_div.appendChild(t.toHTML());
+		});
+		this.elements.push(track_div);
+		return track_div;
+	}
 	static onClick(){}
 	static onBack(){}
+	
+	//Called to show or hide tracks
 	static onOpen(){}
 	static onClose(){}
-	static onPlay(){}
+	
+	//Called to populate the queue
+	static onLoad(){}
 	static uploadAlbum(o){
 		let a = new Album(o);
 		if(o.clone) a = o.clone();

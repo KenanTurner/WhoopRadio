@@ -81,54 +81,66 @@ progress_container.addEventListener('click',function(e){
 });
 
 let album_container = document.getElementById('album-container');
-let track_container = document.getElementById('track-container');
-let previous_album = undefined;
+let album_track_container = document.getElementById('album-track-container');
+window.current_album = undefined;
 Album.onClick = function(a){
-	if(previous_album) Album.onClose(previous_album);
-	Album.onOpen(a);
 	window.history.pushState(a.toJSON(),'','#'+encodeURI(a.title));
+	historyChange(window.history);
 }
-//Soundcloud causes huge issues :(
 Album.onBack = function(a){
-	if(window.history.state){
-		window.history.back();
-	}else{
-		window.history.pushState(a.toJSON(),'','#'+encodeURI(a.title));
-		window.history.back();
-	}
+	window.history.back();
 }
 Album.onClose = function(a){
-	album_container.style.display = 'grid';
-	window.scrollTo(0, 0);
-	while(track_container.firstChild) track_container.removeChild(track_container.lastChild);
+	let parent = a.elements.pop();
 	a.tracks.forEach(function(t,i,arr){
-		t.elements.length = 0; //May cause issues later
+		t.elements = t.elements.filter(function(el){
+			return el.parentElement != parent;
+		});
 	});
+	parent.remove();
 }
 Album.onOpen = function(a){
-	album_container.style.display = 'none';
 	window.scrollTo(0, 0);
-	track_container.appendChild(a.toAlbumHeader());
+	album_track_container.appendChild(a.toTrackContainer());
 	a.tracks.forEach(function(t){
-		track_container.appendChild(t.toHTML());
-		if(t.equals(mm._track)) Custom.onLoad(t);
+		let index = mm.find(t);
+		if(index != -1) mm.tracks[index].elements = t.elements;
+		if(t.equals(mm._track)) mm._track.elements = t.elements;
 	});
-	previous_album = a;
+	if(mm._track) Custom.onLoad(mm._track);
 }
-Album.onPlay = function(a){
-	mm.stop();
+Album.onLoad = function(a){
+	if(mm._track) mm.stop();
 	mm.clear();
 	mm.push(a);
 	mm.load(a.tracks[0])
 	.then(mm.chain('play'));
 }
-window.addEventListener('popstate', function(e){
-	if(previous_album) Album.onClose(previous_album);
-  if(e.state){
-		let a = albums.find(function(tmp){return tmp.equals(e.state)})
-		Album.onOpen(a);
+//Soundcloud really screws this up :(
+function historyChange(e){
+	//always close current album
+	if(current_album) Album.onClose(current_album);
+	//if no album is set, close the desktop
+	if(!current_album) album_container.style.display = 'none';
+	//no state specified, return to desktop
+	if(!e.state){
+		album_container.style.display = 'grid';
+		current_album = undefined;
+	}else{
+		current_album = albums.find(function(a){
+			return a.equals(e.state);
+		});
+		if(mm.equals(e.state)) current_album=mm;
+		if(!current_album){
+			console.log("Disappearing album:",e.state);
+			if(e.state.title != mm.title) return; //I could make a new album here
+			mm.push(...e.state.tracks);
+			current_album = mm;
+		}
+		Album.onOpen(current_album);
 	}
-});
+};
+window.addEventListener('popstate', historyChange);
 
 Custom.onClick = function(t){
 	let paused = mm._status.paused;
@@ -146,6 +158,17 @@ Custom.onUnload = function(t){
 		e.classList.remove('playing');
 	});
 }
+function reloadAlbum(e){
+	let a = e.target;
+	if(!current_album.equals(a)) return;
+	Album.onClose(current_album);
+	Album.onOpen(current_album);
+}
+mm.subscribe('add',reloadAlbum);
+mm.subscribe('remove',reloadAlbum);
+mm.subscribe('clear',reloadAlbum);
+mm.subscribe('shuffle',reloadAlbum);
+mm.subscribe('sort',reloadAlbum);
 
 //keyboard controls
 let keyEvent = function(e,key_code,f,...args){
@@ -221,16 +244,15 @@ fetch("./php/get-albums.php").then(function(r){return r.json()}).then(function(a
 		albums.push(a);
 		album_container.appendChild(a.toHTML());
 	});
-	if(window.location.hash){
-		if(window.history.state){
-			Album.onOpen(new Album(window.history.state));//this will cause problems
-		}else{
-			//We need to create a new event?
-			let tmp = window.location.hash.substring(1);
-			let title = decodeURI(tmp);
-			albums.forEach(function(a){
-				if(a.title == title) Album.onOpen(a);
-			});
-		}
+	if(window.history.state){
+		historyChange(window.history);
+	}else if(window.location.hash){
+		//We need to create a new event?
+		let tmp = window.location.hash.substring(1);
+		let title = decodeURI(tmp);
+		let a = albums.find(function(a){
+			return a.title == title
+		});
+		Album.onClick(a); //this will cause problems
 	}
 });
