@@ -4,13 +4,13 @@ body {
 	color: #E6E6E6;
 	font-size: 100%;
 	/* make room for footer */
-	margin-bottom: 60px;
+	margin-bottom: 62px;
 }
 .controls {
 	display: flex;
 	justify-content: space-evenly;
 	padding: 6px;
-	max-width: 540px;
+	max-width: 900px;
 	margin-left: auto;
 	margin-right: auto;
 }
@@ -49,17 +49,31 @@ footer {
 	border-color: #999999;
 }
 #progress-container {
-	width: 100%;
+	width: 25%;
+	/*flex-grow: 25;*/
+	flex-wrap: wrap;
 	margin: 0px;
 	padding: 0px;
 	display: flex;
 	cursor: pointer;
+	padding-top: 8px;
 }
-#progress-container > *{
-	height: 4px;
+#progress-container .track-title{
+	flex-basis: 100%;
 }
 #current-progress {
 	background: #ff0000;
+	margin-top: auto;
+	margin-bottom: auto;
+	height: 4px;
+	width: 100%;
+}
+#current-duration {
+	background: #999999;
+	margin-top: auto;
+	margin-bottom: auto;
+	flex-grow: 1;
+	height: 4px;
 }
 
 /* Album related css below */
@@ -69,8 +83,7 @@ footer {
 	grid-template-rows: repeat(auto-fit, 220px);
 	grid-gap: 20px;
 	justify-content: center;
-	margin-top: 20px;
-	margin-bottom: 20px;
+	padding: 20px;
 }
 .album-container > *{
 	max-width: 200px;
@@ -116,7 +129,7 @@ footer {
 	display: grid;
 	grid-template-rows: repeat(auto-fit, 60px);
 	grid-gap: 10px;
-	max-width: 900px;
+	/*max-width: 900px;*/
 	margin-left: auto;
 	margin-right: auto;
 }
@@ -139,7 +152,7 @@ footer {
 .track-img {
 	height: 100%;
 	width: 100%;
-	object-fit: cover;
+	object-fit: contain;
 	border-radius: 5px;
 }
 .track-text-container {
@@ -148,7 +161,8 @@ footer {
 	padding-left: 10px;
 	display: flex;
 	flex-direction: column;
-	max-width: 85%;
+	max-width: 80%;
+	margin-right: auto;
 }
 .track-title {
 	color: #ffffff;
@@ -174,9 +188,9 @@ footer {
 		border-width: 0px;
 		border-bottom-width: 1px;
 }
-.album-header >:nth-child(n+3):not(.bg-img-container) {
+/*.album-header >:nth-child(n+3):not(.bg-img-container) {
 		margin-left: auto;
-}
+}*/
 .album-header .track-title {
 		text-shadow: 2px 2px 2px #000000;
 }

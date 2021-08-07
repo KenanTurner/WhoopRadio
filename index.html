@@ -9,10 +9,8 @@
 	</head>
 	<body>
 		<footer>
-			<div id="progress-container">
-				<div id="current-progress"></div>
-				<div id="duration"></div>
-			</div>
+			
+			<div class="track-container" id="footer-track-container"></div>
 			<div id="controls" class="controls">
 				<button id="previous">|<</button>
 				<button id="backward"><<</button>
@@ -21,6 +19,23 @@
 				<button id="stop">Stop</button>
 				<button id="forward">>></button>
 				<button id="next">>|</button>
+				<div class="track-img-container" id="shuffle">
+					<img class="track-img" src="./images/shuffle-white.png"></img>
+				</div>
+				<div class="track-img-container" id="repeat">
+					<img class="track-img" src="./images/loop-white.png"></img>
+				</div>
+				<div class="track-img-container">
+					<img class="track-img" src="./images/default-white.png"></img>
+				</div>
+				<div id="progress-container">
+					<div id="current-progress"></div>
+					<div id="current-duration"></div>
+					<div class="track-title">Chrono Trigger Main Theme - feat. Steven Feifke (from Chrono Trigger)</div>
+				</div>
+				<div class="track-img-container">
+					<img class="track-img" src="./images/sort-white-drop.png"></img>
+				</div>
 			</div>
 		</footer>
 		<div class="album-container" id="album-container"></div>

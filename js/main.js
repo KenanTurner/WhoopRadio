@@ -121,10 +121,10 @@ function historyChange(e){
 	//always close current album
 	if(current_album) Album.onClose(current_album);
 	//if no album is set, close the desktop
-	if(!current_album) album_container.style.display = 'none';
+	if(!current_album) album_container.classList.add('hidden');
 	//no state specified, return to desktop
 	if(!e.state){
-		album_container.style.display = 'grid';
+		album_container.classList.remove('hidden');
 		current_album = undefined;
 	}else{
 		current_album = albums.find(function(a){

@@ -2,7 +2,6 @@ import _Track from '../MetaMusic/src/track.js';
 export default class Track extends _Track{
 	constructor(obj){
 		super(obj);
-		this.filetype = "CUSTOM";
 		this.elements = [];
 	}
 	clone(){
@@ -40,6 +39,21 @@ export default class Track extends _Track{
 				track_subtitle.innerText = this.src;
 				track_text_div.appendChild(track_subtitle);
 			track_div.appendChild(track_text_div);
+			track_img_div = document.createElement('div');
+			track_img_div.classList.add('track-img-container');
+				track_img = document.createElement('img');
+				track_img.classList.add('track-img');
+				track_img.src = "./images/default-white.png";
+				track_img_div.appendChild(track_img);
+			track_div.appendChild(track_img_div);
+			track_img_div = document.createElement('div');
+			track_img_div.classList.add('track-img-container');
+				track_img = document.createElement('img');
+				track_img.classList.add('track-img');
+				//track_img.src = this.artwork_url || "./images/default-white.png";
+				track_img.src = "./images/play-white.png";
+				track_img_div.appendChild(track_img);
+			track_div.appendChild(track_img_div);
 		track_div.addEventListener('click',function(e){
 			this.constructor.onClick(this);
 		}.bind(this));
