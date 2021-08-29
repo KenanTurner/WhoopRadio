@@ -1,4 +1,4 @@
 # Don't track content of these folders
-data/*
+metadata/*
 local/*
 *.ini
