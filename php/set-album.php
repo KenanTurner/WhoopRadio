@@ -4,7 +4,7 @@
 	    http_response_code(500);
 	    exit("Album is required!");
 	}
-    $dir = "../data/";
+    $dir = "../metadata/";
     
     //potential encoder
     function base64url_encode($data) {

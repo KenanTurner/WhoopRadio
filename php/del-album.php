@@ -4,7 +4,7 @@
 	http_response_code(500);
 	exit("Album is required!");
     }
-    $dir = "../data/";
+    $dir = "../metadata/";
 	
     $file = mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $album['title']);
     $file = mb_ereg_replace("([\.]{2,})", '', $file);

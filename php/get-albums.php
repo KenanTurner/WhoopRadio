@@ -6,7 +6,7 @@
 		return findDirectory('../'.$dir);
 	}
 	$dir = findDirectory("music/");*/
-	$dir = '../data/';
+	$dir = '../metadata/';
 	$files = glob($dir."*.json*");
 	echo "[";
 	for ($i=0; $i<count($files); $i++){
