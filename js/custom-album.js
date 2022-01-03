@@ -112,6 +112,8 @@ export default class Album extends A{
 	
 	//Called to populate the queue
 	static onLoad(){}
+	
+	//handle upload stuff
 	static uploadAlbum(o){
 		let a = new Album(o);
 		if(o.clone) a = o.clone();
@@ -123,10 +125,25 @@ export default class Album extends A{
 		}).then(function(r){return r.json()})
 	}
 	static fetchAlbum(url){
-		let arr = Object.values(Album.players).filter(function(p){return p._validAlbumURL(url)});
-		if(arr.length == 0) throw new Error("Invalid URL");
-		if(arr.length > 1) throw new Error("Ambiguous URL");
-		let player = arr[0];
+		let player = Album._validAlbumURL(url);
+		if(!player) throw new Error("Invalid URL");
 		return player.fetchAlbum(url);
+	}
+	static _validAlbumURL(url){
+		let arr = Object.values(Album.players).filter(function(p){return p._validAlbumURL(url)});
+		if(arr.length == 0) return false;
+		if(arr.length > 1) return false;
+		return arr[0];
+	}
+	static fetchTrack(url){
+		let player = Album._validURL(url);
+		if(!player) throw new Error("Invalid URL");
+		return player.fetchTrack(url);
+	}
+	static _validURL(url){
+		let arr = Object.values(Album.players).filter(function(p){return p._validURL(url)});
+		if(arr.length == 0) return false;
+		if(arr.length > 1) return false;
+		return arr[0];
 	}
 }

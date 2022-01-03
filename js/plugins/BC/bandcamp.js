@@ -15,4 +15,13 @@ export default class BC extends _BC{
 	if(tmp.pathname.includes('/album/')) return true;
 	return false;
     }
+    static fetchTrack(url){
+	return fetch('./js/plugins/BC/fetch-track.php',{
+	    method: 'POST',
+	    body: JSON.stringify({url:url}),
+	}).then(function(r){
+	    if(r.status != 200) return r.text().then(function(e){return Promise.reject(e)})
+	    return r.json()
+	})
+    }
 }

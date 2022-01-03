@@ -44,6 +44,7 @@ export default class VGM extends HTML{
 	    return r.json();
 	})
     }
+    //TODO allow downloads.khinsider.com
     static _validURL(url){
 	if(!HTML._validURL(url)) return false;
 	let tmp = new URL(url);

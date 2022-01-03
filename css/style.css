@@ -4,15 +4,28 @@ body {
 	color: #E6E6E6;
 	font-size: 100%;
 	/* make room for footer */
-	margin-bottom: 62px;
+	margin-bottom: 65px;
+}
+.controls-container {
+	box-sizing: border-box;
+	display: flex;
+	width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+	padding-left: 2%;
+	padding-right: 2%;
+	align-items: center;
+	flex-wrap: wrap-reverse;
+}
+.controls-container > *{
+	box-sizing: border-box;
+	flex-grow: 1;
+	flex-basis: 50%;
+	min-width: 540px;
 }
 .controls {
 	display: flex;
 	justify-content: space-evenly;
-	padding: 6px;
-	max-width: 900px;
-	margin-left: auto;
-	margin-right: auto;
 }
 .controls > *{ /*selects all children*/
 	padding: 12px;
@@ -27,6 +40,30 @@ body {
 	color: white;
 	border-color: white;
 	border-style: solid;
+}
+.controls-container .track:hover {
+	background: unset;
+}
+#volume-container {
+	display: flex;
+	flex-wrap: wrap;
+}
+#volume-container > *:first-child {
+	width: 100%;
+	flex-basis: 100%;
+}
+#volume-container > *:nth-child(3) {
+	margin-left:auto;
+	margin-right:auto;
+}
+.track > #progress-container{
+	flex-grow: 1;
+}
+.track > #current-track-img{
+	margin-right: 4px;
+}
+.track > #queue{
+	margin-left: 4px;
 }
 .playing {
 	background-image: linear-gradient(to right, #0000FF , #FF0000);
@@ -56,7 +93,10 @@ footer {
 	padding: 0px;
 	display: flex;
 	cursor: pointer;
-	padding-top: 8px;
+	padding-top: 4px;
+}
+#progress-container > *{
+	pointer-events: none;
 }
 #progress-container .track-title{
 	flex-basis: 100%;
@@ -66,7 +106,7 @@ footer {
 	margin-top: auto;
 	margin-bottom: auto;
 	height: 4px;
-	width: 100%;
+	width: 0%;
 }
 #current-duration {
 	background: #999999;
@@ -74,6 +114,7 @@ footer {
 	margin-bottom: auto;
 	flex-grow: 1;
 	height: 4px;
+	width: 100%;
 }
 
 /* Album related css below */
@@ -132,6 +173,7 @@ footer {
 	/*max-width: 900px;*/
 	margin-left: auto;
 	margin-right: auto;
+	padding-bottom: 10px;
 }
 .track-container > *{
 	max-height: 60px;
@@ -148,6 +190,7 @@ footer {
 	height: 60px;
 	box-sizing: border-box;
 	padding: 3px;
+	flex-shrink: 0;
 }
 .track-img {
 	height: 100%;
@@ -161,7 +204,7 @@ footer {
 	padding-left: 10px;
 	display: flex;
 	flex-direction: column;
-	max-width: 80%;
+	min-width: 10%;
 	margin-right: auto;
 }
 .track-title {
@@ -177,7 +220,7 @@ footer {
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
-.track:hover:not(.album-header){
+.track:hover{
 	background-color: rgba(0, 0, 0, 0.2);
 }
 
@@ -187,6 +230,9 @@ footer {
 		border-style: solid;
 		border-width: 0px;
 		border-bottom-width: 1px;
+}
+.album-header:hover{
+	background: unset;
 }
 /*.album-header >:nth-child(n+3):not(.bg-img-container) {
 		margin-left: auto;
@@ -217,4 +263,11 @@ footer {
     background-repeat: no-repeat;
     background-size: cover;
     z-index: -1;
+}
+.queue-title {
+	color: #ffffff;
+	font-size: 250%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }

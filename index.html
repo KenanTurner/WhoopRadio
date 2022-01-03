@@ -9,32 +9,45 @@
 	</head>
 	<body>
 		<footer>
-			
-			<div class="track-container" id="footer-track-container"></div>
-			<div id="controls" class="controls">
-				<button id="previous">|<</button>
-				<button id="backward"><<</button>
-				<button id="play">Play</button>
-				<button id="pause">Pause</button>
-				<button id="stop">Stop</button>
-				<button id="forward">>></button>
-				<button id="next">>|</button>
-				<div class="track-img-container" id="shuffle">
-					<img class="track-img" src="./images/shuffle-white.png"></img>
+			<div id="controls" class="controls-container">
+				<div class="controls">
+					<div class="track-img-container" id="upload">
+						<img class="track-img" src="./images/upload-white.png"></img>
+					</div>
+					<div class="track-img-container" id="volume-container">
+						<input type="range" min="0" max="1" value="1" step="0.1" id="volume">
+						<div>0</div>
+						<div>0.5</div>
+						<div>1</div>
+					</div>
+					<div class="track-img-container" id="previous">
+						<img class="track-img" src="./images/previous-white.png"></img>
+					</div>
+					<div class="track-img-container" id="play">
+						<img class="track-img" src="./images/play-white.png"></img>
+					</div>
+					<div class="track-img-container" id="next">
+						<img class="track-img" src="./images/next-white.png"></img>
+					</div>
+					<div class="track-img-container" id="shuffle">
+						<img class="track-img" src="./images/shuffle-white.png"></img>
+					</div>
+					<div class="track-img-container" id="loop">
+						<img class="track-img" src="./images/loop-white.png"></img>
+					</div>
 				</div>
-				<div class="track-img-container" id="repeat">
-					<img class="track-img" src="./images/loop-white.png"></img>
-				</div>
-				<div class="track-img-container">
-					<img class="track-img" src="./images/default-white.png"></img>
-				</div>
-				<div id="progress-container">
-					<div id="current-progress"></div>
-					<div id="current-duration"></div>
-					<div class="track-title">Chrono Trigger Main Theme - feat. Steven Feifke (from Chrono Trigger)</div>
-				</div>
-				<div class="track-img-container">
-					<img class="track-img" src="./images/sort-white-drop.png"></img>
+				<div class="track">
+					<div class="track-img-container" id='current-track-img'>
+						<img class="track-img" src="./images/default-white.png"></img>
+					</div>
+					<div id="progress-container">
+						<div id="current-progress"></div>
+						<div id="current-duration"></div>
+						<div class="track-title" id="current-track-title"><br></div>
+					</div>
+					<div class="track-img-container" id="queue">
+						<img class="track-img" src="./images/queue-white.png"></img>
+					</div>
 				</div>
 			</div>
 		</footer>

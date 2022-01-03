@@ -24,6 +24,10 @@
         $playlist = getYoutubeJson($id,$pageToken);
         $pageToken = $playlist->nextPageToken;
         //array_push($album['data'],$playlist);
+        if(is_null($playlist)){
+            http_response_code(500);
+            exit("Invalid ID!");
+        }
         
         foreach ($playlist->items AS $item){
             if($item->snippet->title=="Private video" or $item->snippet->title=="Deleted video"){

@@ -45,4 +45,27 @@ export default class SC extends _SC{
 		if(tmp.pathname.includes('/sets/')) return true;
 		return false;
     }
+    static fetchTrack(url){
+		window.sc = new SC();
+		let track = new SC.Track({title:"SC",src:url})
+		return sc.waitForEvent('ready')
+		.then(sc.chain('load',track))
+		.then(function(){
+			return new Promise(function(res,rej){
+				sc._player.getCurrentSound(res);
+			});
+		})
+		.then(function(obj){
+			let track = {};
+			track.src = obj.permalink_url;
+			track.title = obj.title;
+			track.artwork_url = obj.artwork_url || obj.user.avatar_url;
+			track.duration = obj.full_duration/1000;
+			track.artist = obj.user.username;
+			track.filetype = "SC";
+			return track;
+		})
+		.finally(sc.chain('destroy'));
+		//Don't forget to remove the iframe
+    }
 }

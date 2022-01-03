@@ -33,5 +33,14 @@ export default class YT extends _YT{
 			return false;
 		}
     }
+    static fetchTrack(url){
+		return fetch('./js/plugins/YT/fetch-track.php',{
+			method: 'POST',
+			body: JSON.stringify({id:YT.getYoutubeId(url),url:url}),
+		}).then(function(r){
+			if(r.status != 200) return r.text().then(function(e){return Promise.reject(e)})
+			return r.json()
+		});
+    }
 }
 
