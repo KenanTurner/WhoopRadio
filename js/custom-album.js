@@ -8,7 +8,7 @@ export default class Album extends A{
 	}
 	clone(){
 		let tmp = this.constructor.fromJSON(JSON.stringify(this));
-		tmp.element = this.element;
+		tmp.elements = this.elements;
 		return tmp;
 	}
 	toJSON(){ //serialization
@@ -18,10 +18,20 @@ export default class Album extends A{
 		return obj;
 	}
 	static fromJSON(json){ //deserialization
-		let obj = {...JSON.parse(json),...super.fromJSON(json)}; //merge the two objects
+		let obj = {...super.fromJSON(json),...JSON.parse(json)}; //merge the two objects
 		return new Album(obj);
 	}
-	toHTML(){
+	css(f='toggle',css_class){
+		this.elements.forEach(function(e){
+			e.classList[f](css_class);
+		});
+	}
+	parent(f){
+		return function(e){
+			this.constructor[f](this);
+		}.bind(this)
+	}
+	toNode(){
 		let album_div = document.createElement('div');
 		album_div.classList.add('album');
 		album_div.title = this.title;
@@ -30,6 +40,9 @@ export default class Album extends A{
 				let album_img = document.createElement('img');
 				album_img.classList.add('album-img');
 				album_img.src = this.artwork_url || "./images/default-white.png";
+				album_img.addEventListener('error',function(){
+					this.src='./images/error.png';
+				});
 				album_img_div.appendChild(album_img);
 			album_div.appendChild(album_img_div);
 			let album_text_div = document.createElement('div');
@@ -39,10 +52,7 @@ export default class Album extends A{
 				album_title.innerText = this.title;
 				album_text_div.appendChild(album_title);
 			album_div.appendChild(album_text_div);
-		album_div.addEventListener('click',function(e){
-			this.constructor.onClick(this);
-		}.bind(this));
-		//this.element = album_div;
+		album_div.addEventListener('click',this.parent('onOpen'));
 		return album_div;
 	}
 	toAlbumHeader(){
@@ -55,9 +65,7 @@ export default class Album extends A{
 				let track_img = document.createElement('img');
 				track_img.classList.add('track-img');
 				track_img.src = "./images/back-white-drop.png";
-				track_img.addEventListener('click',function(e){
-					this.constructor.onBack(this);
-				}.bind(this));
+				track_img.addEventListener('click',this.parent('onClose'));
 				track_img_div.appendChild(track_img);
 			track_div.appendChild(track_img_div);
 			let track_text_div = document.createElement('div');
@@ -76,9 +84,7 @@ export default class Album extends A{
 				let play_img = document.createElement('img');
 				play_img.classList.add('track-img');
 				play_img.src = "./images/play-white.png";
-				play_img.addEventListener('click',function(e){
-					this.constructor.onLoad(this);
-				}.bind(this));
+				play_img.addEventListener('click',this.parent('onLoad'));
 				play_img_div.appendChild(play_img);
 			track_div.appendChild(play_img_div);
 			let bg_img_div = document.createElement('div');
@@ -98,6 +104,53 @@ export default class Album extends A{
 		track_div.id = this.title;
 		track_div.appendChild(this.toAlbumHeader());
 		this.tracks.forEach(function(t){
+			track_div.appendChild(t.toNode());
+		});
+		this.elements.push(track_div);
+		return track_div;
+	}
+	update(){
+		if(!this.elements) return;
+		this.elements.forEach(function(div){
+			while(div.childNodes.length > 1) div.removeChild(div.lastChild);
+			this.tracks.forEach(function(t){
+				div.appendChild(t.toNode());
+			});
+		}.bind(this));
+	}
+	push(...items){
+		super.push(...items);
+		this.update();
+	}
+	insert(index,...items){
+		super.insert(index,...items);
+		this.update();
+	}
+	remove(...items){
+		super.remove(...items);
+		this.update();
+	}
+	clear(){
+		super.clear();
+		this.update();
+	}
+	shuffle(){
+		super.shuffle();
+		this.update();
+	}
+	sort(key="track_num",reversed=false){
+		super.sort(key,reversed);
+		this.update();
+	}
+	static onOpen(){}
+	static onClose(){}
+	static onLoad(){}
+	/*toTrackContainer(){
+		let track_div = document.createElement('div');
+		track_div.classList.add('track-container');
+		track_div.id = this.title;
+		track_div.appendChild(this.toAlbumHeader());
+		this.tracks.forEach(function(t){
 			track_div.appendChild(t.toHTML());
 		});
 		this.elements.push(track_div);
@@ -111,7 +164,7 @@ export default class Album extends A{
 	static onClose(){}
 	
 	//Called to populate the queue
-	static onLoad(){}
+	static onLoad(){}*/
 	
 	//handle upload stuff
 	static uploadAlbum(o){

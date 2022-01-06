@@ -2,17 +2,24 @@
 <html>
 	<head>
 		<link rel="stylesheet" href="./css/style.css">
+		<link rel="stylesheet" href="./css/track.css">
+		<link rel="stylesheet" href="./css/album.css">
 		<link rel="preload" as="image" href="./images/default-white.png">
 		<link rel="preload" as="image" href="./images/back-white-drop.png">
-		<script type="text/javascript" src="./MetaMusic/src/module-manager.js"></script>
+		<!--enable HTML Console-->
+		<link rel="stylesheet" href="./MetaMusic/tests/shared/console.css">
+		<script type="module" src="./MetaMusic/examples/shared/enable-console.js"></script>
+		
+		<script type="module" src="./js/controls.js"></script>
 		<script type="module" src="./js/main.js"></script>
+		<script type="module" src="./js/upload.js"></script>
 	</head>
 	<body>
 		<footer>
 			<div id="controls" class="controls-container">
 				<div class="controls">
-					<div class="track-img-container" id="upload">
-						<img class="track-img" src="./images/upload-white.png"></img>
+					<div class="track-img-container" id="loop">
+						<img class="track-img" src="./images/loop-white.png"></img>
 					</div>
 					<div class="track-img-container" id="volume-container">
 						<input type="range" min="0" max="1" value="1" step="0.1" id="volume">
@@ -32,8 +39,8 @@
 					<div class="track-img-container" id="shuffle">
 						<img class="track-img" src="./images/shuffle-white.png"></img>
 					</div>
-					<div class="track-img-container" id="loop">
-						<img class="track-img" src="./images/loop-white.png"></img>
+					<div class="track-img-container" id="upload">
+						<img class="track-img" src="./images/upload-white.png"></img>
 					</div>
 				</div>
 				<div class="track">

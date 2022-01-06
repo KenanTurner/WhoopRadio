@@ -1,22 +1,30 @@
-import _Track from '../MetaMusic/src/track.js';
-export default class Track extends _Track{
+import T from '../MetaMusic/src/track.js';
+export default class Track extends T{
 	constructor(obj){
 		super(obj);
+		//TODO add cool things like artwork_url
 		this.elements = [];
 	}
 	clone(){
-		let tmp = this.constructor.fromJSON(JSON.stringify(this));
-		this.elements.forEach(function(el){
-			tmp.elements.push(el);
-		});
-		return tmp;
+		let track = super.clone();
+		track.elements = this.elements;
+		return track;
 	}
 	static fromJSON(json){ //deserialization
-		//TODO is this order correct?
 		let obj = {...super.fromJSON(json),...JSON.parse(json)}; //merge the two objects
 		return new Track(obj);
 	}
-	toHTML(){
+	css(f='toggle',css_class){
+		this.elements.forEach(function(e){
+			e.classList[f](css_class);
+		});
+	}
+	parent(f){
+		return function(e){
+			this.constructor[f](this);
+		}.bind(this)
+	}
+	toNode(){
 		let track_div = document.createElement('div');
 		track_div.classList.add('track');
 		track_div.title = this.title;
@@ -26,10 +34,11 @@ export default class Track extends _Track{
 				track_img.classList.add('track-img');
 				//track_img.src = this.artwork_url || "./images/default-white.png";
 				track_img.src = "./images/default-white.png";
+				track_img.addEventListener('error',function(){
+					this.src='./images/error.png';
+				});
 				track_img_div.appendChild(track_img);
-				track_img_div.addEventListener('click',function(e){
-					this.constructor.onClick(this);
-				}.bind(this));
+				track_img_div.addEventListener('click',this.parent('onLoad'));
 			track_div.appendChild(track_img_div);
 			let track_text_div = document.createElement('div');
 			track_text_div.classList.add('track-text-container');
@@ -41,25 +50,22 @@ export default class Track extends _Track{
 				track_subtitle.classList.add('track-subtitle');
 				track_subtitle.innerText = this.src;
 				track_text_div.appendChild(track_subtitle);
-				track_text_div.addEventListener('click',function(e){
-					this.constructor.onClick(this);
-				}.bind(this));
+				track_text_div.addEventListener('click',this.parent('onLoad'));
 			track_div.appendChild(track_text_div);
 			track_img_div = document.createElement('div');
 			track_img_div.classList.add('track-img-container');
 				track_img = document.createElement('img');
 				track_img.classList.add('track-img');
 				track_img.src = "./images/options-white.png";
-				track_img.addEventListener('click',function(e){
-					this.constructor.onOpen(this);
-				}.bind(this));
+				track_img_div.addEventListener('click',this.parent('onOptions'));
 				track_img_div.appendChild(track_img);
 			track_div.appendChild(track_img_div);
+		if(this.elements.length > 0) track_div.classList = this.elements[0].classList;
 		this.elements.push(track_div);
 		return track_div;
 	}
 	toOptions(){
-		let track_div = []
+		let track_div = [];
 			let track_img_div = document.createElement('div');
 			track_img_div.classList.add('track-img-container');
 				let track_img = document.createElement('img');
@@ -95,11 +101,13 @@ export default class Track extends _Track{
 		return track_div;
 	}
 	//to be overloaded later
-	static onClick(){}
+	static onLoad(){}
+	static onOptions(){}
+	/*static onClick(){}
 	static onLoad(){}
 	static onUnload(){}
 	static onOpen(){}
 	static onClose(){}
 	static onAppend(){}
-	static onInsert(){}
+	static onInsert(){}*/
 }
