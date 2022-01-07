@@ -33,6 +33,8 @@ Object.defineProperty(input,'paused',{
 		this._paused = bool == true;
 		mm.enqueue(this._paused? 'pause': 'play');
 		play_btn.children[0].src = this._paused? './images/play-white.png': './images/pause-white.png';
+		let session = window.top.navigator.mediaSession;
+		if(session) session.playbackState = input.paused? "paused": "playing";
 	},
 	get: function(){ return this._paused; }
 });
@@ -103,6 +105,9 @@ mm.subscribe({type:'ended',callback:function(e){
 	if(is_looping && !is_paused) mm.enqueue('play');
 }});
 keyEvent('keyup','l',loop_btn.click.bind(shuffle_btn));*/
+loop_btn.addEventListener('click',function(){
+	window.top.console._div.classList.toggle('hidden');
+});
 
 
 //###################### progress bar ######################
@@ -135,19 +140,45 @@ if ('mediaSession' in navigator) {
 		let obj = {}
 		obj.title = mm.current_track.title;
 		obj.artist = mm.current_track.artist;
+		if(!obj.artist && mm.current_album) obj.artist = mm.current_album.artist;
+		if(mm.current_album) obj.album = mm.current_album.title;
+		if(mm.current_album) obj.artwork = ['96x96','128x128','192x192','256x256','354x384','512x512'].map(function(sizes){
+			return {src: mm.current_album.artwork_url || "./images/default-white.png", sizes, type: 'image/png'};
+		})
 		session.metadata = new MediaMetadata(obj);
 	}});
-	try{
-		// navigator.mediaSession.setActionHandler('pause', mm.enqueue.bind(mm,'pause'));
-		// navigator.mediaSession.setActionHandler('stop', mm.enqueue.bind(mm,'stop'));
-		// navigator.mediaSession.setActionHandler('seekbackward', mm.enqueue.bind(mm,'fastForward',-5));
-		// navigator.mediaSession.setActionHandler('seekforward', mm.enqueue.bind(mm,'fastForward',5));
-		// navigator.mediaSession.setActionHandler('seekto', mm.enqueue.bind(mm,'seek'));
-		navigator.mediaSession.setActionHandler('previoustrack', previous_btn.click.bind(previous_btn));
-		navigator.mediaSession.setActionHandler('nexttrack', next_btn.click.bind(next_btn));
-	}catch(e){
-		console.error("mediaSession failed to initialize: ",e);
-	}
+	mm.subscribe({type:'loaded',callback:function(e){
+		let setInput = function(key,val){
+			return function(){ input[key] = val; }
+		}
+		try{
+			session.setActionHandler('play', setInput('paused',false));
+			session.setActionHandler('pause', setInput('paused',true));
+			session.setActionHandler('stop', setInput('paused',true));
+			session.setActionHandler('seekbackward', function({seekOffset}){
+				mm.enqueue('fastForward',seekOffset || -5);
+			});
+			session.setActionHandler('seekforward', function({seekOffset}){
+				mm.enqueue('fastForward',seekOffset || 5);
+			});
+			navigator.mediaSession.setActionHandler('seekto', function({seekTime}){
+				mm.enqueue('seek',seekTime);
+			});
+			session.setActionHandler('previoustrack', previous_btn.click.bind(previous_btn));
+			session.setActionHandler('nexttrack', next_btn.click.bind(next_btn));
+		}catch(e){
+			console.error("mediaSession failed to initialize: ",e);
+		}
+	}});
+	mm.subscribe({type:'timeupdate',callback:function(e){
+		let obj = {}
+		obj.duration = e.status.duration;
+		obj.position = e.status.time;
+		obj.playbackRate = 1;
+		if(!obj.duration || !obj.position) return;
+		session.setPositionState(obj);
+	}});
+	
 }else{
 	console.log("mediaSession is unsupported");
 }
@@ -179,8 +210,10 @@ window.dispatchEvent(new Event('resize'));
 
 //###################### Window lost focus ######################
 document.addEventListener("visibilitychange", function(){
-	input.paused = input.paused;
-});
+	setTimeout(function(){
+		input.paused = input.paused;
+	},50);
+},false);
 
 console.log("Controls are ready");
 export default input;

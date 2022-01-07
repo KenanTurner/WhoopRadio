@@ -26,7 +26,7 @@ MetaMusic.players = {HTML,YT,SC,BC};
 window.mm = new MetaMusic();
 mm.subscribe({type:'error',callback:function(err){
 	console.error(err);
-	alert("There was an error playing the requested file");
+	//alert("There was an error playing the requested file");
 }});
 mm.subscribe({type:'all',callback:function(e){console.debug(e)}});
 export default mm;
@@ -36,14 +36,14 @@ export default mm;
 let album_container = document.getElementById('album-container');
 let album_track_container = document.getElementById('album-track-container');
 
-let current_album;
+mm.current_album = undefined;
 Album.onOpen = function(album){
-	if(current_album) current_album.elements.forEach(function(div){ div.remove(); });
+	if(mm.current_album) mm.current_album.elements.forEach(function(div){ div.remove(); });
 	album_container.classList.add('hidden');
 	album_track_container.appendChild(album.toTrackContainer());
 	album_track_container.classList.remove('hidden');
 	window.scrollTo(0, 0);
-	current_album = album;
+	mm.current_album = album;
 	if(!album.equals(window.history.state)) window.history.pushState(album.toJSON(),'',album.title? '#'+encodeURI(album.title): '#');
 }
 Album.onClose = function(album){
@@ -56,10 +56,10 @@ queue_btn.addEventListener('click',function(e){
 function historyChange(e){
 	//console.log("History changed: ",e.state);
 	if(!e.state){
-		if(current_album) current_album.elements.forEach(function(div){ div.remove(); });
+		if(mm.current_album) mm.current_album.elements.forEach(function(div){ div.remove(); });
 		album_container.classList.remove('hidden');
 		album_track_container.classList.add('hidden');
-		return current_album = undefined;
+		return mm.current_album = undefined;
 	}
 	let album = metadata.find(function(a){
 		return a.equals(e.state);
