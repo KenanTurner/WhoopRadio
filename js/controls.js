@@ -172,10 +172,9 @@ if ('mediaSession' in navigator) {
 	}});
 	mm.subscribe({type:'timeupdate',callback:function(e){
 		let obj = {}
-		obj.duration = e.status.duration;
-		obj.position = e.status.time;
+		obj.duration = e.status.duration || 0;
+		obj.position = e.status.time || 0;
 		obj.playbackRate = 1;
-		if(!obj.duration || !obj.position) return;
 		session.setPositionState(obj);
 	}});
 	
