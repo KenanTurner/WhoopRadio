@@ -2,3 +2,4 @@
 metadata/*
 local/*
 *.ini
+*.sh
