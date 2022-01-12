@@ -4,17 +4,102 @@
 		<link rel="stylesheet" href="./css/style.css">
 		<link rel="stylesheet" href="./css/track.css">
 		<link rel="stylesheet" href="./css/album.css">
+		<link rel="stylesheet" href="./css/upload.css">
 		<link rel="preload" as="image" href="./images/default-white.png">
 		<link rel="preload" as="image" href="./images/back-white-drop.png">
-		<!--enable HTML Console-->
-		<link rel="stylesheet" href="./MetaMusic/tests/shared/console.css">
-		<script type="module" src="./MetaMusic/examples/shared/enable-console.js"></script>
 		
 		<script type="module" src="./js/controls.js"></script>
 		<script type="module" src="./js/main.js"></script>
 		<script type="module" src="./js/upload.js"></script>
 	</head>
 	<body>
+		<div class="modal hidden" id="upload-container">
+			<div class="modal-content">
+				<div class="row">
+					<label for="">TODO:</label>
+					<select id="">
+						<option disabled selected value> -- select an option -- </option>
+					</select>
+				</div>
+				<div class="row">
+					<label for="upload-type">Upload type:</label>
+					<select id="upload-type">
+						<option disabled selected value> -- select an option -- </option>
+						<option value="Track">Track</option>
+						<option value="Album">Album</option>
+						<option value="JSON">JSON</option>
+					</select>
+				</div>
+				<div id="upload-track" class="hidden">
+					<div class="row">
+						<label for="track-type">Track Type:</label>
+						<select id="track-type">
+							<option disabled selected value> -- select an option -- </option>
+						</select>
+					</div>
+					<div class="row">
+						<label for="track-dest">Destination:</label>
+						<select id="track-dest">
+							<option disabled selected value> -- select an option -- </option>
+							<option value="1"> &lt; New Album &gt; </option>
+						</select>
+					</div>
+					<div class="row hidden">
+						<label for="track-album">Album Title:</label>
+						<input id="track-album" type="text"></input>
+					</div>
+					<div class="row">
+						<label for="track-src">URL:</label>
+						<input id="track-src" type="url"></input>
+					</div>
+					<div class="row hidden">
+						<label for="track-title">Title:</label>
+						<input id="track-title" type="text"></input>
+					</div>
+				</div>
+				<div id="upload-album" class="hidden">
+					<div class="row">
+						<label for="album-type">Album Type:</label>
+						<select id="album-type">
+							<option disabled selected value> -- select an option -- </option>
+						</select>
+					</div>
+					<div class="row">
+						<label for="album-dest">Destination:</label>
+						<select id="album-dest">
+							<option disabled selected value> -- select an option -- </option>
+							<option value="1"> &lt; New Album &gt; </option>
+						</select>
+					</div>
+					<div class="row hidden">
+						<label for="album-title">Album Title:</label>
+						<input id="album-title" type="text"></input>
+					</div>
+					<div class="row">
+						<label for="album-src">URL:</label>
+						<input id="album-src" type="url"></input>
+					</div>
+				</div>
+				<div id="upload-json" class="hidden">
+					<div class="row">
+						<label for="upload-file">File:</label>
+						<input id="upload-file" type="file" accept=".json" multiple="true"></input>
+					</div>
+				</div>
+				
+				<div class="row bottom">
+					<button id="reset" disabled>Reset</button>
+					<button id="submit" disabled>Submit</button>
+				</div>
+			</div>
+		</div>
+		<!--<div class="modal hidden" id="upload-container">
+			<div class="modal-content">
+				Upload Complete!
+			</div>
+		</div>-->
+		<div class="album-container" id="album-container"></div>
+		<div id="album-track-container"></div>
 		<footer>
 			<div id="controls" class="controls-container">
 				<div class="controls">
@@ -58,7 +143,5 @@
 				</div>
 			</div>
 		</footer>
-		<div class="album-container" id="album-container"></div>
-		<div id="album-track-container"></div>
 	</body>
 </html>
