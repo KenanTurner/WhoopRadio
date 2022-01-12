@@ -4,19 +4,19 @@ import BC from '../MetaMusic/src/plugins/BC/bandcamp.js';
 import SC from '../MetaMusic/src/plugins/SC/soundcloud.js';
 import Queue from '../MetaMusic/src/queue.js';
 import MetaMusic from '../MetaMusic/src/meta-music.js';
-import Track from './custom-track.js';
-import Album from './custom-album.js';
+import CustomTrack from './custom-track.js';
+import CustomAlbum from './custom-album.js';
 import MetaQueue from './custom-queue.js';
 let Player = Object.getPrototypeOf(MetaMusic);
 
 //Inject the Custom class into the prototype chain
-Object.setPrototypeOf(Player.Track,Track); //This is poggers
-Object.setPrototypeOf(Player.Track.prototype,Track.prototype); //Like super poggers
+Object.setPrototypeOf(Player.Track,CustomTrack); //This is poggers
+Object.setPrototypeOf(Player.Track.prototype,CustomTrack.prototype); //Like super poggers
 Object.setPrototypeOf(Queue,MetaQueue); //This is poggers
 Object.setPrototypeOf(Queue.prototype,MetaQueue.prototype); //Like super poggers
 BC.proxy_url = '../MetaMusic/src/plugins/BC/bandcamp-proxy.php';
 
-let imports = {Player,HTML,YT,BC,SC,MetaMusic,Album};
+let imports = {Player,HTML,YT,BC,SC,MetaMusic};
 function map(src,dest={},key=function(k){return k},value=function(v){return v}){for(let k in src){dest[key(k)] = value(src[k]);};return dest;}
 map(imports,window);
 console.log("Imports Loaded");
@@ -37,7 +37,7 @@ let album_container = document.getElementById('album-container');
 let album_track_container = document.getElementById('album-track-container');
 
 mm.current_album = undefined;
-Album.onOpen = function(album,update_history = true){
+CustomAlbum.onOpen = function(album,update_history = true){
 	if(mm.current_album) mm.current_album.elements.forEach(function(div){ div.remove(); });
 	album_container.classList.add('hidden');
 	album_track_container.appendChild(album.toTrackContainer());
@@ -46,12 +46,12 @@ Album.onOpen = function(album,update_history = true){
 	mm.current_album = album;
 	if(update_history) window.history.pushState(album.toJSON(),'',album.title? '#'+encodeURI(album.title): '#');
 }
-Album.onClose = function(album){
+CustomAlbum.onClose = function(album){
 	window.history.back();
 }
 let queue_btn = document.getElementById('queue');
 queue_btn.addEventListener('click',function(e){
-	Album.onOpen(mm.queue);
+	CustomAlbum.onOpen(mm.queue);
 });
 
 let previous_track;
@@ -86,7 +86,7 @@ function historyChange(e){
 	});
 	if(!album && mm.queue.equals(e.state)) album = mm.queue;
 	if(!album) return console.warn("Disappearing album: ",e.state);
-	Album.onOpen(album,false);
+	CustomAlbum.onOpen(album,false);
 };
 window.addEventListener('popstate', historyChange);
 historyChange(window.history);
@@ -97,6 +97,6 @@ if(!window.history.state && window.location.hash){
 	});
 	if(album){
 		window.history.pushState(null,'','#');
-		Album.onOpen(album);
+		CustomAlbum.onOpen(album);
 	}
 }
