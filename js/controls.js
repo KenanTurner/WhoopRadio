@@ -193,7 +193,12 @@ Album.onLoad = async function(album){
 	mm.enqueue('stop');
 	mm.enqueue(mm.queue.clear.bind(mm.queue));
 	mm.enqueue(mm.queue.push.bind(mm.queue),album);
-	mm.enqueue('load',album.tracks[0]);
+	mm.enqueue(function(){
+		input.sorted = input.sorted;
+	});
+	mm.enqueue(function(){
+		mm.load(mm.queue.tracks[0]);
+	});
 	await mm.waitForEvent('loaded');
 	input.paused = false;
 }
