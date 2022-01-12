@@ -32,8 +32,8 @@ export default class Track extends T{
 			track_img_div.classList.add('track-img-container');
 				let track_img = document.createElement('img');
 				track_img.classList.add('track-img');
-				//track_img.src = this.artwork_url || "./images/default-white.png";
-				track_img.src = "./images/default-white.png";
+				//track_img.src = this.artwork_url || "./images/default.png";
+				track_img.src = "./images/default.png";
 				track_img.addEventListener('error',function(){
 					this.src='./images/error.png';
 				});
@@ -56,7 +56,7 @@ export default class Track extends T{
 			track_img_div.classList.add('track-img-container');
 				track_img = document.createElement('img');
 				track_img.classList.add('track-img');
-				track_img.src = "./images/options-white.png";
+				track_img.src = "./images/options.png";
 				track_img_div.addEventListener('click',this.parent('onOptions'));
 				track_img_div.appendChild(track_img);
 			track_div.appendChild(track_img_div);
@@ -70,7 +70,7 @@ export default class Track extends T{
 			track_img_div.classList.add('track-img-container');
 				let track_img = document.createElement('img');
 				track_img.classList.add('track-img');
-				track_img.src = "./images/append-white.png";
+				track_img.src = "./images/append.png";
 			track_img_div.appendChild(track_img);
 			track_img_div.addEventListener('click',function(e){
 				this.constructor.onAppend(this);
@@ -81,7 +81,7 @@ export default class Track extends T{
 			track_img_div.classList.add('track-img-container');
 				track_img = document.createElement('img');
 				track_img.classList.add('track-img');
-				track_img.src = "./images/play-next-white.png";
+				track_img.src = "./images/insert.png";
 			track_img_div.appendChild(track_img);
 			track_img_div.addEventListener('click',function(e){
 				this.constructor.onInsert(this);
@@ -92,7 +92,7 @@ export default class Track extends T{
 			track_img_div.classList.add('track-img-container');
 				track_img = document.createElement('img');
 				track_img.classList.add('track-img');
-				track_img.src = "./images/close-white.png";
+				track_img.src = "./images/close.png";
 			track_img_div.appendChild(track_img);
 			track_img_div.addEventListener('click',function(e){
 				this.constructor.onClose(this);

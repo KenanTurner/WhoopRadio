@@ -39,7 +39,7 @@ export default class Album extends A{
 			album_img_div.classList.add('album-img-container');
 				let album_img = document.createElement('img');
 				album_img.classList.add('album-img');
-				album_img.src = this.artwork_url || "./images/default-white.png";
+				album_img.src = this.artwork_url || "./images/default.png";
 				album_img.addEventListener('error',function(){
 					this.src='./images/error.png';
 				});
@@ -64,7 +64,7 @@ export default class Album extends A{
 			track_img_div.classList.add('track-img-container');
 				let track_img = document.createElement('img');
 				track_img.classList.add('track-img');
-				track_img.src = "./images/back-white-drop.png";
+				track_img.src = "./images/back.png";
 				track_img.addEventListener('click',this.parent('onClose'));
 				track_img_div.appendChild(track_img);
 			track_div.appendChild(track_img_div);
@@ -83,7 +83,7 @@ export default class Album extends A{
 			play_img_div.classList.add('track-img-container');
 				let play_img = document.createElement('img');
 				play_img.classList.add('track-img');
-				play_img.src = "./images/play-white.png";
+				play_img.src = "./images/load.png";
 				play_img.addEventListener('click',this.parent('onLoad'));
 				play_img_div.appendChild(play_img);
 			track_div.appendChild(play_img_div);

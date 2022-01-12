@@ -33,7 +33,7 @@ Object.defineProperty(input,'paused',{
 	set: function(bool){
 		this._paused = bool == true;
 		mm.enqueue(this._paused? 'pause': 'play');
-		play_btn.children[0].src = this._paused? './images/play-white.png': './images/pause-white.png';
+		play_btn.children[0].src = this._paused? './images/play.png': './images/pause.png';
 		let session = window.top.navigator.mediaSession;
 		if(session) session.playbackState = input.paused? "paused": "playing";
 	},
@@ -86,7 +86,7 @@ Object.defineProperty(input,'sorted',{
 	set: function(bool){
 		this._sorted = bool == true;
 		this._sorted? mm.queue.sort(): mm.queue.shuffle();
-		shuffle_btn.children[0].src = this._sorted? './images/shuffle-white.png': './images/shuffle-highlight.png';
+		shuffle_btn.children[0].src = this._sorted? './images/shuffle.png': './images/shuffle-highlight.png';
 	},
 	get: function(){ return this._sorted; }
 });
@@ -100,7 +100,7 @@ keyEvent('keyup','s',shuffle_btn.click.bind(shuffle_btn));
 /*let is_looping = false;
 loop_btn.addEventListener('click',function(){
 	is_looping = !is_looping;
-	loop_btn.children[0].src = is_looping? './images/loop-highlight.png': './images/loop-white.png';
+	loop_btn.children[0].src = is_looping? './images/loop-highlight.png': './images/loop.png';
 });
 mm.subscribe({type:'ended',callback:function(e){
 	if(is_looping && !is_paused) mm.enqueue('play');
@@ -129,7 +129,7 @@ progress_container.addEventListener('click',async function(e){
 mm.subscribe({type:'loaded',callback:function(e){
 	current_track_title.innerText = mm.current_track.title;
 	current_track_title.title = mm.current_track.title;
-	current_track_img.children[0].src = mm.current_track.artwork_url || './images/default-white.png';
+	current_track_img.children[0].src = mm.current_track.artwork_url || './images/default.png';
 }});
 keyEvent('keydown','ArrowRight',mm.enqueue.bind(mm,'fastForward',5));
 keyEvent('keydown','ArrowLeft',mm.enqueue.bind(mm,'fastForward',-5));
@@ -147,7 +147,7 @@ if ('mediaSession' in navigator) {
 		if(!obj.artist && mm.current_album) obj.artist = mm.current_album.artist;
 		if(mm.current_album) obj.album = mm.current_album.title;
 		if(mm.current_album) obj.artwork = ['96x96','128x128','192x192','256x256','354x384','512x512'].map(function(sizes){
-			return {src: mm.current_album.artwork_url || "./images/default-white.png", sizes, type: 'image/png'};
+			return {src: mm.current_album.artwork_url || "./images/default.png", sizes, type: 'image/png'};
 		})
 		session.metadata = new MediaMetadata(obj);
 	}});
