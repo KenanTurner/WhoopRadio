@@ -164,7 +164,7 @@ export default class Album extends A{
 	static onClose(){}
 	
 	//Called to populate the queue
-	static onLoad(){}*/
+	static onLoad(){}
 	
 	//handle upload stuff
 	static uploadAlbum(o){
@@ -198,5 +198,5 @@ export default class Album extends A{
 		if(arr.length == 0) return false;
 		if(arr.length > 1) return false;
 		return arr[0];
-	}
+	}*/
 }

@@ -37,14 +37,14 @@ let album_container = document.getElementById('album-container');
 let album_track_container = document.getElementById('album-track-container');
 
 mm.current_album = undefined;
-Album.onOpen = function(album){
+Album.onOpen = function(album,update_history = true){
 	if(mm.current_album) mm.current_album.elements.forEach(function(div){ div.remove(); });
 	album_container.classList.add('hidden');
 	album_track_container.appendChild(album.toTrackContainer());
 	album_track_container.classList.remove('hidden');
 	window.scrollTo(0, 0);
 	mm.current_album = album;
-	if(!album.equals(window.history.state)) window.history.pushState(album.toJSON(),'',album.title? '#'+encodeURI(album.title): '#');
+	if(update_history) window.history.pushState(album.toJSON(),'',album.title? '#'+encodeURI(album.title): '#');
 }
 Album.onClose = function(album){
 	window.history.back();
@@ -53,22 +53,6 @@ let queue_btn = document.getElementById('queue');
 queue_btn.addEventListener('click',function(e){
 	Album.onOpen(mm.queue);
 });
-function historyChange(e){
-	//console.log("History changed: ",e.state);
-	if(!e.state){
-		if(mm.current_album) mm.current_album.elements.forEach(function(div){ div.remove(); });
-		album_container.classList.remove('hidden');
-		album_track_container.classList.add('hidden');
-		return mm.current_album = undefined;
-	}
-	let album = metadata.find(function(a){
-		return a.equals(e.state);
-	});
-	if(!album && mm.queue.equals(e.state)) album = mm.queue;
-	if(!album) return console.warn("Disappearing album: ",e.state);
-	Album.onOpen(album);
-};
-
 
 let previous_track;
 mm.subscribe({type:'loaded',callback:function(e){
@@ -81,20 +65,29 @@ mm.subscribe({type:'loaded',callback:function(e){
 }});
 
 //################### Download Metadata ###################
-window.metadata = (await (await fetch("../php/metadata.php")).json()).map(function(data){
-	return new Album(data);
-}).filter(function(album){
-	return album.tracks.length > 0;
-}).sort(function(a,b){
-	if(a.title < b.title) return -1;
-	if(a.title > b.title) return 1;
-	if(a.title === b.title) return 0;
-});
+let {default:metadata} = await import('./metadata.js');
 metadata.forEach(function(album){
 	album_container.appendChild(album.toNode());
 });
 
 //################### Reflect History ###################
+function historyChange(e){
+	if(!e.state){
+		if(mm.current_album) mm.current_album.elements.forEach(function(div){ div.remove(); });
+		album_container.classList.remove('hidden');
+		album_track_container.classList.add('hidden');
+		return mm.current_album = undefined;
+	}
+	let album = metadata.find(function(a){
+		return a.equals(e.state);
+	});
+	if(!album) album = metadata.find(function(a){
+		return a.title === e.state.title;
+	});
+	if(!album && mm.queue.equals(e.state)) album = mm.queue;
+	if(!album) return console.warn("Disappearing album: ",e.state);
+	Album.onOpen(album,false);
+};
 window.addEventListener('popstate', historyChange);
 historyChange(window.history);
 if(!window.history.state && window.location.hash){

@@ -18,11 +18,12 @@ let input = {_paused:true,_sorted:true,_volume:1};
 
 //###################### keyboard controls ######################
 document.addEventListener("keydown", function(e){ //prevent defaults
+	if(e.target.tagName === "INPUT") return;
 	if([' ', 'ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp'].indexOf(e.key) > -1) e.preventDefault();
 });
 let keyEvent = function(e,key_code,f,...args){
 	document.addEventListener(e, function(e){
-		if(e.key === key_code) return f(...args);
+		if(e.key === key_code && e.target.tagName !== "INPUT") return f(...args);
 	}, false);
 }
 
@@ -112,7 +113,10 @@ loop_btn.addEventListener('click',function(){
 
 //###################### progress bar ######################
 mm.subscribe({type:'timeupdate',callback:function(e){
-	let p = 100*e.status.time/e.status.duration;
+	let time = e.status.time || 0;
+	let duration = e.status.duration || 0;
+	if(time > duration) return;
+	let p = 100*time/duration;
 	progress_div.style.width = String(p)+"%";
 	duration_div.style.width = String(100-p)+"%";
 }});
@@ -147,7 +151,8 @@ if ('mediaSession' in navigator) {
 		})
 		session.metadata = new MediaMetadata(obj);
 	}});
-	mm.subscribe({type:'loaded',callback:function(e){
+	mm.subscribe({type:'loaded',callback:async function(e){
+		await mm.waitForEvent('play');
 		let setInput = function(key,val){
 			return function(){ input[key] = val; }
 		}
@@ -175,7 +180,7 @@ if ('mediaSession' in navigator) {
 		obj.duration = e.status.duration || 0;
 		obj.position = e.status.time || 0;
 		obj.playbackRate = 1;
-		session.setPositionState(obj);
+		if(obj.position <= obj.duration) session.setPositionState(obj);
 	}});
 	
 }else{
@@ -210,7 +215,7 @@ window.dispatchEvent(new Event('resize'));
 //###################### Window lost focus ######################
 document.addEventListener("visibilitychange", function(){
 	setTimeout(function(){
-		input.paused = input.paused;
+		if(mm.queue.has(mm.current_track)) input.paused = input.paused;
 	},50);
 },false);
 
