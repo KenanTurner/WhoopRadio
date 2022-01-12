@@ -1,29 +1,27 @@
 <?php
     $data = json_decode(file_get_contents('php://input'), true);
-	$id = $data["id"];
-    $url = $data["url"];
-	if(empty($id) or empty($url)){
+	if(empty($data) or empty($data['id'])){
 		http_response_code(500);
-		exit("URL and ID is required!");
+		exit("Album w/ ID is required!");
 	}
     
     function getYoutubeJson($playlist_id,$pageToken=""){
-        $dir = "./youtube.ini";
-        $api_key = parse_ini_file($dir)["api_key"];
+        $file = "./youtube.ini";
+        $api_key = parse_ini_file($file)["api_key"];
         $api_url = 'https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&pageToken=' . $pageToken . '&playlistId='. $playlist_id . '&key=' . $api_key;
         return json_decode(file_get_contents($api_url));
     }
+	
     $album = array();
-    $album['src'] = $url;
+    $album['src'] = $data['src'];
     
-    //$album['data'] = array();
     $album['tracks'] = array();
     $pageToken = "";
     $count = 0;
     while ($count < 100){ //max length of 5000
-        $playlist = getYoutubeJson($id,$pageToken);
+        $playlist = getYoutubeJson($data['id'],$pageToken);
         $pageToken = $playlist->nextPageToken;
-        //array_push($album['data'],$playlist);
+		
         if(is_null($playlist)){
             http_response_code(500);
             exit("Invalid ID!");
