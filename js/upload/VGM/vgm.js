@@ -1,4 +1,4 @@
-import _HTML from '../HTMl/html.js';
+import _HTML from '../HTML/html.js';
 export default class VGM extends _HTML{
 	static async fetchTrack(track){
 		let response = await fetch('./js/upload/VGM/fetch-track.php',{
