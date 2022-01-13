@@ -4,11 +4,23 @@ export default class Album extends A{
 		super(obj);
 		this.artwork_url = obj.artwork_url;
 		this.src = obj.src;
-		this.elements = [];
+		this.icons = [];
+		this.containers = [];
+		let f = function(key){
+			return function(){
+				this[key].forEach(function(node){
+					node.remove();
+				});
+				this[key].length = 0;
+			}.bind(this);
+		}.bind(this);
+		this.icons.remove = f('icons');
+		this.containers.remove = f('containers');
 	}
 	clone(){
 		let tmp = this.constructor.fromJSON(JSON.stringify(this));
-		tmp.elements = this.elements;
+		tmp.icons = this.icons;
+		tmp.containers = this.containers;
 		return tmp;
 	}
 	toJSON(){ //serialization
@@ -22,7 +34,7 @@ export default class Album extends A{
 		return new Album(obj);
 	}
 	css(f='toggle',css_class){
-		this.elements.forEach(function(e){
+		this.containers.forEach(function(e){
 			e.classList[f](css_class);
 		});
 	}
@@ -55,63 +67,90 @@ export default class Album extends A{
 		album_div.addEventListener('click',this.parent('onOpen'));
 		return album_div;
 	}
-	toAlbumHeader(){
-		let track_div = document.createElement('div');
-		track_div.classList.add('track');
-		track_div.classList.add('album-header');
-		track_div.title = this.title;
-			let track_img_div = document.createElement('div');
-			track_img_div.classList.add('track-img-container');
-				let track_img = document.createElement('img');
-				track_img.classList.add('track-img');
-				track_img.src = "./images/back.png";
-				track_img.addEventListener('click',this.parent('onClose'));
-				track_img_div.appendChild(track_img);
-			track_div.appendChild(track_img_div);
-			let track_text_div = document.createElement('div');
-			track_text_div.classList.add('track-text-container');
-				let track_title = document.createElement('div');
-				track_title.classList.add('track-title');
-				track_title.innerText = this.title;
-				track_text_div.appendChild(track_title);
-				let track_subtitle = document.createElement('div');
-				track_subtitle.classList.add('track-subtitle');
-				track_subtitle.innerText = this.src;
-				track_text_div.appendChild(track_subtitle);
-			track_div.appendChild(track_text_div);
-			let play_img_div = document.createElement('div');
-			play_img_div.classList.add('track-img-container');
-				let play_img = document.createElement('img');
-				play_img.classList.add('track-img');
-				play_img.src = "./images/load.png";
-				play_img.addEventListener('click',this.parent('onLoad'));
-				play_img_div.appendChild(play_img);
-			track_div.appendChild(play_img_div);
-			let bg_img_div = document.createElement('div');
-			bg_img_div.classList.add('bg-img-container');
-				let bg_img = document.createElement('div');
-				bg_img.classList.add('bg-img');
-				bg_img.style.backgroundImage = 'url(' + this.artwork_url + ')';
-				if(!this.artwork_url) bg_img.style.background = '#303030';
-				bg_img_div.appendChild(bg_img);
-			track_div.appendChild(bg_img_div);
-		//this.elements.push(track_div);
-		return track_div;
+	toHeader(){
+		let container = createNode("div",{title:this.title},['track','album-header']);
+			let icon_container = createNode("div",{},['track-img-container']);
+				let track_img = createNode("img",{src:"./images/back.png"},['track-img']);
+			icon_container.appendChild(track_img);
+			icon_container.addEventListener('click',this.parent('onClose'));
+			
+			let text_container = createNode('div',{},['track-text-container']);
+				let track_title = createNode('div',{innerText:this.title},['track-title']);
+				let track_subtitle = createNode('div',{innerText:(this.src||"~ unspecified ~")},['track-subtitle']);
+			text_container.appendChild(track_title);
+			text_container.appendChild(track_subtitle);
+			
+			let options_container = createNode("div",{},['track-img-container']);
+				let options_img = createNode("img",{src:"./images/options.png"},['track-img']);
+			options_container.appendChild(options_img);
+			options_container.addEventListener('click',function(){
+				hidden_container.classList.toggle('hidden');
+				options_img.src = hidden_container.classList.contains('hidden')? "./images/options.png": "./images/close.png";
+			});
+			
+			let hidden_container = createNode("div",{},['hidden','track-options']);
+				let delete_container = createNode("div",{},['track-img-container']);
+					let delete_img = createNode("img",{src:"./images/delete.png"},['track-img']);
+				delete_container.addEventListener('click',this.parent('onDelete'));
+				delete_container.addEventListener('click',options_container.click.bind(options_container));
+				delete_container.appendChild(delete_img);
+				
+				let append_container = createNode("div",{},['track-img-container']);
+					let append_img = createNode("img",{src:"./images/append.png"},['track-img']);
+				append_container.addEventListener('click',this.parent('onAppend'));
+				append_container.addEventListener('click',options_container.click.bind(options_container));
+				append_container.appendChild(append_img);
+				
+				let insert_container = createNode("div",{},['track-img-container']);
+					let insert_img = createNode("img",{src:"./images/insert.png"},['track-img']);
+				insert_container.addEventListener('click',this.parent('onInsert'));
+				insert_container.addEventListener('click',options_container.click.bind(options_container));
+				insert_container.appendChild(insert_img);
+				
+				let edit_container = createNode("div",{},['track-img-container']);
+					let edit_img = createNode("img",{src:"./images/edit.png"},['track-img']);
+				edit_container.addEventListener('click',this.parent('onEdit'));
+				edit_container.addEventListener('click',options_container.click.bind(options_container));
+				edit_container.appendChild(edit_img);
+			hidden_container.appendChild(delete_container);
+			hidden_container.appendChild(edit_container);
+			hidden_container.appendChild(append_container);
+			hidden_container.appendChild(insert_container);
+			
+			let load_container = createNode("div",{},['track-img-container']);
+				let load_img = createNode("img",{src:"./images/load.png"},['track-img']);
+			load_container.appendChild(load_img);
+			load_container.addEventListener('click',this.parent('onLoad'));
+			
+			let bg_container = createNode("div",{},['bg-img-container']);
+				let bg_img = createNode("div",{},['bg-img']);
+				if(this.artwork_url){
+					bg_img.style.backgroundImage = 'url(' + this.artwork_url + ')';
+				}else{
+					bg_img.style.background = '#303030';
+				}
+			bg_container.appendChild(bg_img);
+			
+		container.appendChild(icon_container);
+		container.appendChild(text_container);
+		container.appendChild(load_container);
+		container.appendChild(hidden_container);
+		container.appendChild(options_container);
+		container.appendChild(bg_container);
+		return container;
 	}
 	toTrackContainer(){
-		let track_div = document.createElement('div');
-		track_div.classList.add('track-container');
-		track_div.id = this.title;
-		track_div.appendChild(this.toAlbumHeader());
+		let container = createNode("div",{id:this.title},["track-container"]);
+		container.appendChild(this.toHeader());
 		this.tracks.forEach(function(t){
-			track_div.appendChild(t.toNode());
+			container.appendChild(t.toNode());
 		});
-		this.elements.push(track_div);
-		return track_div;
+		this.containers.push(container);
+		return container;
 	}
 	update(){
-		if(!this.elements) return;
-		this.elements.forEach(function(div){
+		if(!this.containers) return;
+		this.containers.forEach(function(div){
 			while(div.childNodes.length > 1) div.removeChild(div.lastChild);
 			this.tracks.forEach(function(t){
 				div.appendChild(t.toNode());
@@ -145,58 +184,17 @@ export default class Album extends A{
 	static onOpen(){}
 	static onClose(){}
 	static onLoad(){}
-	/*toTrackContainer(){
-		let track_div = document.createElement('div');
-		track_div.classList.add('track-container');
-		track_div.id = this.title;
-		track_div.appendChild(this.toAlbumHeader());
-		this.tracks.forEach(function(t){
-			track_div.appendChild(t.toHTML());
-		});
-		this.elements.push(track_div);
-		return track_div;
+}
+function createNode(tag_name,options = {},class_list = [],child_nodes = []){
+	let el = document.createElement(tag_name);
+	for(let key in options){
+		el[key] = options[key];
 	}
-	static onClick(){}
-	static onBack(){}
-	
-	//Called to show or hide tracks
-	static onOpen(){}
-	static onClose(){}
-	
-	//Called to populate the queue
-	static onLoad(){}
-	
-	//handle upload stuff
-	static uploadAlbum(o){
-		let a = new Album(o);
-		if(o.clone) a = o.clone();
-		if(a.length == 0) throw new Error("Empty album!");
-		//upload here
-		return fetch('./php/set-album.php',{
-			method: 'POST',
-			body: JSON.stringify(o,null,'\t'),
-		}).then(function(r){return r.json()})
-	}
-	static fetchAlbum(url){
-		let player = Album._validAlbumURL(url);
-		if(!player) throw new Error("Invalid URL");
-		return player.fetchAlbum(url);
-	}
-	static _validAlbumURL(url){
-		let arr = Object.values(Album.players).filter(function(p){return p._validAlbumURL(url)});
-		if(arr.length == 0) return false;
-		if(arr.length > 1) return false;
-		return arr[0];
-	}
-	static fetchTrack(url){
-		let player = Album._validURL(url);
-		if(!player) throw new Error("Invalid URL");
-		return player.fetchTrack(url);
-	}
-	static _validURL(url){
-		let arr = Object.values(Album.players).filter(function(p){return p._validURL(url)});
-		if(arr.length == 0) return false;
-		if(arr.length > 1) return false;
-		return arr[0];
-	}*/
+	class_list.forEach(function(cl){
+		el.classList.add(cl);
+	});
+	child_nodes.forEach(function(node){
+		el.appendChild(node);
+	});
+	return el;
 }
