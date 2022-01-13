@@ -4,6 +4,7 @@ import SC from './SC/soundcloud.js';
 import VGM from './VGM/vgm.js';
 import CustomAlbum from '../custom-album.js';
 import metadata from '../metadata.js';
+import mm from '../main.js';
 let imports = {"Youtube":YT,"Bandcamp":BC,"Soundcloud":SC,"VGM link":VGM};
 
 let Album = {};
@@ -43,16 +44,6 @@ Album['submit'] = async function(){
 		await jsonPost('../php/upload.php',album,null,'\t');
 		album = new CustomAlbum(album);
 		metadata.push(album);
-		metadata.sort(function(a,b){
-			if(a.title < b.title) return -1;
-			if(a.title > b.title) return 1;
-			if(a.title === b.title) return 0;
-		});
-		let album_container = document.getElementById('album-container');
-		while(album_container.firstChild) album_container.lastChild.remove();
-		metadata.forEach(function(album){
-			album_container.appendChild(album.toNode());
-		});
 	}else{
 		let tmp = metadata.find(function(a){
 			return a.title === album_dest.value;
@@ -63,6 +54,21 @@ Album['submit'] = async function(){
 		album = new CustomAlbum(album);
 		tmp.push(album);
 	}
+}
+CustomAlbum.onDelete = async function(album){
+	if(album === mm.queue){
+		mm.enqueue(mm.queue.clear.bind(mm.queue));
+		mm.enqueue('stop');
+		return;
+	}
+	if(!window.confirm("Delete "+album.title+"?")) return;
+	CustomAlbum.onClose(album);
+	let index = metadata.findIndex(function(a){
+		return a.equals(album);
+	});
+	if(index < 0) throw new Error("Unable to find Album!",album);
+	metadata.splice(index,1);
+	await jsonPost('../php/delete.php',album);
 }
 async function jsonPost(url,obj,replacer,space){
 	let result = await fetch(url,{

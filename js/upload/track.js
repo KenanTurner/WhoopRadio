@@ -3,8 +3,10 @@ import YT from './YT/youtube.js';
 import BC from './BC/bandcamp.js';
 import SC from './SC/soundcloud.js';
 import VGM from './VGM/vgm.js';
+import CustomTrack from '../custom-track.js';
 import CustomAlbum from '../custom-album.js';
 import metadata from '../metadata.js';
+import mm from '../main.js';
 let imports = {"mp3,mp4,wav,flac":HTML,"Youtube":YT,"Bandcamp":BC,"Soundcloud":SC,"VGM link":VGM};
 
 let Track = {};
@@ -59,16 +61,6 @@ Track['submit'] = async function(){
 		album = new CustomAlbum({title:track_album_title.value});
 		await jsonPost('../php/upload.php',album,null,'\t');
 		metadata.push(album);
-		metadata.sort(function(a,b){
-			if(a.title < b.title) return -1;
-			if(a.title > b.title) return 1;
-			if(a.title === b.title) return 0;
-		});
-		let album_container = document.getElementById('album-container');
-		while(album_container.firstChild) album_container.lastChild.remove();
-		metadata.forEach(function(album){
-			album_container.appendChild(album.toNode());
-		});
 	}
 	if(!album) throw new Error("No album found with specified title");
 	
@@ -78,6 +70,19 @@ Track['submit'] = async function(){
 	
 	track = new Player.Track(track);
 	album.push(track);
+}
+CustomTrack.onDelete = async function(track){
+	let album = mm.current_album;
+	if(album !== mm.queue && !window.confirm("Delete "+track.title+"?")) return;
+	album.remove(track);
+	if(album === mm.queue) return;
+	
+	let obj = await jsonPost('../php/download.php',album);
+	obj.tracks = obj.tracks.filter(function(t){
+		let tmp = new track.constructor(t);
+		return !track.equals(tmp);
+	});
+	await jsonPost('../php/upload.php',obj,null,'\t');
 }
 async function jsonPost(url,obj,replacer,space){
 	let result = await fetch(url,{
