@@ -52,6 +52,10 @@
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
+.track-options {
+	display: flex;
+	flex-direction: row;
+}
 .track:hover{
 	background-color: rgba(0, 0, 0, 0.2);
 }

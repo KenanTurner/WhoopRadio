@@ -106,9 +106,6 @@ mm.subscribe({type:'ended',callback:function(e){
 	if(is_looping && !is_paused) mm.enqueue('play');
 }});
 keyEvent('keyup','l',loop_btn.click.bind(shuffle_btn));*/
-loop_btn.addEventListener('click',function(){
-	window.top.console._div.classList.toggle('hidden');
-});
 
 
 //###################### progress bar ######################

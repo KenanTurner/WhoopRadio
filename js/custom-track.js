@@ -3,19 +3,25 @@ export default class Track extends T{
 	constructor(obj){
 		super(obj);
 		//TODO add cool things like artwork_url
-		this.elements = [];
+		this.nodes = [];
 	}
 	clone(){
 		let track = super.clone();
-		track.elements = this.elements;
+		track.nodes = this.nodes;
 		return track;
+	}
+	remove(){
+		this.nodes.forEach(function(node){
+			node.remove();
+		});
+		this.nodes.length = 0;
 	}
 	static fromJSON(json){ //deserialization
 		let obj = {...super.fromJSON(json),...JSON.parse(json)}; //merge the two objects
 		return new Track(obj);
 	}
 	css(f='toggle',css_class){
-		this.elements.forEach(function(e){
+		this.nodes.forEach(function(e){
 			e.classList[f](css_class);
 		});
 	}
@@ -25,89 +31,83 @@ export default class Track extends T{
 		}.bind(this)
 	}
 	toNode(){
-		let track_div = document.createElement('div');
-		track_div.classList.add('track');
-		track_div.title = this.title;
-			let track_img_div = document.createElement('div');
-			track_img_div.classList.add('track-img-container');
-				let track_img = document.createElement('img');
-				track_img.classList.add('track-img');
-				//track_img.src = this.artwork_url || "./images/default.png";
-				track_img.src = "./images/default.png";
-				track_img.addEventListener('error',function(){
-					this.src='./images/error.png';
-				});
-				track_img_div.appendChild(track_img);
-				track_img_div.addEventListener('click',this.parent('onLoad'));
-			track_div.appendChild(track_img_div);
-			let track_text_div = document.createElement('div');
-			track_text_div.classList.add('track-text-container');
-				let track_title = document.createElement('div');
-				track_title.classList.add('track-title');
-				track_title.innerText = this.title;
-				track_text_div.appendChild(track_title);
-				let track_subtitle = document.createElement('div');
-				track_subtitle.classList.add('track-subtitle');
-				track_subtitle.innerText = this.src;
-				track_text_div.appendChild(track_subtitle);
-				track_text_div.addEventListener('click',this.parent('onLoad'));
-			track_div.appendChild(track_text_div);
-			track_img_div = document.createElement('div');
-			track_img_div.classList.add('track-img-container');
-				track_img = document.createElement('img');
-				track_img.classList.add('track-img');
-				track_img.src = "./images/options.png";
-				track_img_div.addEventListener('click',this.parent('onOptions'));
-				track_img_div.appendChild(track_img);
-			track_div.appendChild(track_img_div);
-		if(this.elements.length > 0) track_div.classList = this.elements[0].classList;
-		this.elements.push(track_div);
-		return track_div;
-	}
-	toOptions(){
-		let track_div = [];
-			let track_img_div = document.createElement('div');
-			track_img_div.classList.add('track-img-container');
-				let track_img = document.createElement('img');
-				track_img.classList.add('track-img');
-				track_img.src = "./images/append.png";
-			track_img_div.appendChild(track_img);
-			track_img_div.addEventListener('click',function(e){
-				this.constructor.onAppend(this);
-				this.constructor.onClose(this);
-			}.bind(this));
-		track_div.push(track_img_div);
-			track_img_div = document.createElement('div');
-			track_img_div.classList.add('track-img-container');
-				track_img = document.createElement('img');
-				track_img.classList.add('track-img');
-				track_img.src = "./images/insert.png";
-			track_img_div.appendChild(track_img);
-			track_img_div.addEventListener('click',function(e){
-				this.constructor.onInsert(this);
-				this.constructor.onClose(this);
-			}.bind(this));
-		track_div.push(track_img_div);
-			track_img_div = document.createElement('div');
-			track_img_div.classList.add('track-img-container');
-				track_img = document.createElement('img');
-				track_img.classList.add('track-img');
-				track_img.src = "./images/close.png";
-			track_img_div.appendChild(track_img);
-			track_img_div.addEventListener('click',function(e){
-				this.constructor.onClose(this);
-			}.bind(this));
-		track_div.push(track_img_div);
-		return track_div;
+		let container = createNode("div",{title:this.title},['track']);
+			let icon_container = createNode("div",{},['track-img-container']);
+				let track_img = createNode("img",{src:"./images/default.png"},['track-img']);
+				track_img.addEventListener('error',function(){ this.src='./images/error.png'; });
+			icon_container.appendChild(track_img);
+			icon_container.addEventListener('click',this.parent('onLoad'));
+			
+			let text_container = createNode('div',{},['track-text-container']);
+				let track_title = createNode('div',{innerText:this.title},['track-title']);
+				let track_subtitle = createNode('div',{innerText:this.src},['track-subtitle']);
+			text_container.appendChild(track_title);
+			text_container.appendChild(track_subtitle);
+			text_container.addEventListener('click',this.parent('onLoad'));
+			
+			let options_container = createNode("div",{},['track-img-container']);
+				let options_img = createNode("img",{src:"./images/options.png"},['track-img']);
+			options_container.appendChild(options_img);
+			options_container.addEventListener('click',function(){
+				hidden_container.classList.toggle('hidden');
+				options_img.src = hidden_container.classList.contains('hidden')? "./images/options.png": "./images/close.png";
+			});
+			
+			let hidden_container = createNode("div",{},['hidden','track-options']);
+				let delete_container = createNode("div",{},['track-img-container']);
+					let delete_img = createNode("img",{src:"./images/delete.png"},['track-img']);
+				delete_container.addEventListener('click',this.parent('onDelete'));
+				delete_container.addEventListener('click',options_container.click.bind(options_container));
+				delete_container.appendChild(delete_img);
+				
+				let append_container = createNode("div",{},['track-img-container']);
+					let append_img = createNode("img",{src:"./images/append.png"},['track-img']);
+				append_container.addEventListener('click',this.parent('onAppend'));
+				append_container.addEventListener('click',options_container.click.bind(options_container));
+				append_container.appendChild(append_img);
+				
+				let insert_container = createNode("div",{},['track-img-container']);
+					let insert_img = createNode("img",{src:"./images/insert.png"},['track-img']);
+				insert_container.addEventListener('click',this.parent('onInsert'));
+				insert_container.addEventListener('click',options_container.click.bind(options_container));
+				insert_container.appendChild(insert_img);
+				
+				let edit_container = createNode("div",{},['track-img-container']);
+					let edit_img = createNode("img",{src:"./images/edit.png"},['track-img']);
+				edit_container.addEventListener('click',this.parent('onEdit'));
+				edit_container.addEventListener('click',options_container.click.bind(options_container));
+				edit_container.appendChild(edit_img);
+			hidden_container.appendChild(delete_container);
+			hidden_container.appendChild(edit_container);
+			hidden_container.appendChild(append_container);
+			hidden_container.appendChild(insert_container);
+			
+		container.appendChild(icon_container);
+		container.appendChild(text_container);
+		container.appendChild(hidden_container);
+		container.appendChild(options_container);
+		
+		if(this.nodes.length > 0) container.classList = this.nodes[0].classList;
+		this.nodes.push(container);
+		return container;
 	}
 	//to be overloaded later
 	static onLoad(){}
-	static onOptions(){}
-	/*static onClick(){}
-	static onLoad(){}
-	static onUnload(){}
-	static onOpen(){}
-	static onClose(){}
+	static onDelete(){}
 	static onAppend(){}
-	static onInsert(){}*/
+	static onInsert(){}
+	static onEdit(){}
+}
+function createNode(tag_name,options = {},class_list = [],child_nodes = []){
+	let el = document.createElement(tag_name);
+	for(let key in options){
+		el[key] = options[key];
+	}
+	class_list.forEach(function(cl){
+		el.classList.add(cl);
+	});
+	child_nodes.forEach(function(node){
+		el.appendChild(node);
+	});
+	return el;
 }

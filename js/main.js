@@ -53,6 +53,12 @@ let queue_btn = document.getElementById('queue');
 queue_btn.addEventListener('click',function(e){
 	CustomAlbum.onOpen(mm.queue);
 });
+CustomTrack.onAppend = function(track){
+	mm.queue.push(track);
+}
+CustomTrack.onInsert = function(track){
+	mm.queue.insertNext(track);
+}
 
 let previous_track;
 mm.subscribe({type:'loaded',callback:function(e){
