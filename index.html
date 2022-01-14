@@ -7,12 +7,14 @@
 		<link rel="stylesheet" href="./css/album.css">
 		<link rel="stylesheet" href="./css/track.css">
 		<link rel="stylesheet" href="./css/upload.css">
+		<link rel="stylesheet" href="./css/info.css">
 		<link rel="preload" as="image" href="./images/default.png">
 		
 		<script type="module" src="./js/metadata.js"></script>
+		<script type="module" src="./js/main.js"></script>
 		<script type="module" src="./js/controls.js"></script>
 		<script type="module" src="./js/upload.js"></script>
-		<script type="module" src="./js/main.js"></script>
+		<script type="module" src="./js/info.js"></script>
 	</head>
 	<body>
 		<div class="modal hidden" id="upload-container">
@@ -90,6 +92,20 @@
 			</div>
 		</div>
 		
+		<div class="modal hidden" id="info-container">
+			<div class="modal-content">
+				<div class="modal-title">Welcome to Whoop Radio!</div>
+				<div class="modal-info">
+					<div class="modal-para">Whoop Radio is developed and maintained by Kenan Turner, a proud member of the Fightin' Texas Aggie class of 2023.</div>
+					<div class="modal-para">If you wish to contribute, please check out the github repository for <a href="https://github.com/KenanTurner/WhoopRadio" target="_blank">WhoopRadio</a> and <a href="https://github.com/KenanTurner/MetaMusic" target="_blank">MetaMusic</a>.</div>
+					<div class="modal-para">I am not taking donations at this time. However, any Dr. Pepper can be delivered in person to dorm 10.</div>
+					<div class="modal-para">Any questions, comments or concerns can be sent to <a href="mailto:dev@whoopradio.com">dev@whoopradio.com</a></div>
+					<div class="modal-para">And as always...</div>
+				</div>				
+				<div class="modal-footer">Thanks, Gig 'Em and God Bless Texas!</div>
+			</div>
+		</div>
+		
 		<div class="modal hidden" id="edit-container">
 			<div class="modal-content">
 				<div class="row">
@@ -107,46 +123,44 @@
 		<div class="album-container" id="album-container"></div>
 		<div id="album-track-container"></div>
 		
-		<footer>
-			<div id="controls" class="controls-container">
-				<div class="controls">
-					<!--<div class="track-img-container" id="loop">
-						<img class="track-img" src="./images/loop.png"></img>
-					</div>-->
-					<div class="track-img-container" id="volume-container">
-						<input type="range" min="0" max="1" value="1" step="0.1" id="volume">
-						<div>0</div>
-						<div>0.5</div>
-						<div>1</div>
-					</div>
-					<div class="track-img-container" id="previous">
-						<img class="track-img" src="./images/previous.png"></img>
-					</div>
-					<div class="track-img-container" id="play">
-						<img class="track-img" src="./images/play.png"></img>
-					</div>
-					<div class="track-img-container" id="next">
-						<img class="track-img" src="./images/next.png"></img>
-					</div>
-					<div class="track-img-container" id="shuffle">
-						<img class="track-img" src="./images/shuffle.png"></img>
-					</div>
-					<div class="track-img-container" id="upload">
-						<img class="track-img" src="./images/upload.png"></img>
-					</div>
+		<footer id="controls" class="controls-container">
+			<div class="controls">
+				<div class="track-img-container" id="info">
+					<img class="track-img" src="./images/info.png"></img>
 				</div>
-				<div class="track">
-					<div class="track-img-container" id='current-track-img'>
-						<img class="track-img" src="./images/default.png"></img>
-					</div>
-					<div id="progress-container">
-						<div id="current-progress"></div>
-						<div id="current-duration"></div>
-						<div class="track-title" id="current-track-title"><br></div>
-					</div>
-					<div class="track-img-container" id="queue">
-						<img class="track-img" src="./images/queue.png"></img>
-					</div>
+				<div class="track-img-container" id="volume-container">
+					<input type="range" min="0" max="1" value="1" step="0.1" id="volume">
+					<div>0</div>
+					<div>0.5</div>
+					<div>1</div>
+				</div>
+				<div class="track-img-container" id="previous">
+					<img class="track-img" src="./images/previous.png"></img>
+				</div>
+				<div class="track-img-container" id="play">
+					<img class="track-img" src="./images/play.png"></img>
+				</div>
+				<div class="track-img-container" id="next">
+					<img class="track-img" src="./images/next.png"></img>
+				</div>
+				<div class="track-img-container" id="shuffle">
+					<img class="track-img" src="./images/shuffle.png"></img>
+				</div>
+				<div class="track-img-container" id="upload">
+					<img class="track-img" src="./images/upload.png"></img>
+				</div>
+			</div>
+			<div class="track">
+				<div class="track-img-container" id='current-track-img'>
+					<img class="track-img" src="./images/default.png"></img>
+				</div>
+				<div id="progress-container">
+					<div id="current-progress"></div>
+					<div id="current-duration"></div>
+					<div class="track-title" id="current-track-title"><br></div>
+				</div>
+				<div class="track-img-container" id="queue">
+					<img class="track-img" src="./images/queue.png"></img>
 				</div>
 			</div>
 		</footer>
