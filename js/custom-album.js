@@ -44,28 +44,19 @@ export default class Album extends A{
 		}.bind(this)
 	}
 	toNode(){
-		let album_div = document.createElement('div');
-		album_div.classList.add('album');
-		album_div.title = this.title;
-			let album_img_div = document.createElement('div');
-			album_img_div.classList.add('album-img-container');
-				let album_img = document.createElement('img');
-				album_img.classList.add('album-img');
-				album_img.src = this.artwork_url || "./images/default.png";
-				album_img.addEventListener('error',function(){
-					this.src='./images/error.png';
-				});
-				album_img_div.appendChild(album_img);
-			album_div.appendChild(album_img_div);
-			let album_text_div = document.createElement('div');
-			album_text_div.classList.add('album-text-container');
-				let album_title = document.createElement('div');
-				album_title.classList.add('album-title');
-				album_title.innerText = this.title;
-				album_text_div.appendChild(album_title);
-			album_div.appendChild(album_text_div);
-		album_div.addEventListener('click',this.parent('onOpen'));
-		return album_div;
+		let container = createNode("div",{title:this.title},['album']);
+			let icon_container = createNode("div",{},['album-img-container']);
+				let icon_img = createNode("img",{src:this.artwork_url || "./images/default.png"},['album-img']);
+				icon_img.addEventListener('error',function(){ this.src='./images/error.png'; });
+			icon_container.appendChild(icon_img);
+			let text_container = createNode("div",{},['album-text-container']);
+				let icon_text = createNode("div",{innerText:this.title},['album-title']);
+			text_container.appendChild(icon_text);
+		container.appendChild(icon_container);
+		container.appendChild(text_container);
+		container.addEventListener('click',this.parent('onOpen'));
+		this.icons.push(container);
+		return container;
 	}
 	toHeader(){
 		let container = createNode("div",{title:this.title},['track','album-header']);
@@ -84,8 +75,14 @@ export default class Album extends A{
 				let options_img = createNode("img",{src:"./images/options.png"},['track-img']);
 			options_container.appendChild(options_img);
 			options_container.addEventListener('click',function(){
-				hidden_container.classList.toggle('hidden');
-				options_img.src = hidden_container.classList.contains('hidden')? "./images/options.png": "./images/close.png";
+				if(hidden_container.classList.contains('hidden')){
+					options_img.src = "./images/close.png";
+					hidden_container.classList.remove('hidden');
+					setTimeout(window.addEventListener.bind(window),0,'click',function(e){
+						hidden_container.classList.add('hidden');
+						options_img.src = "./images/options.png";
+					},{once:true});
+				}
 			});
 			
 			let hidden_container = createNode("div",{},['hidden','track-options']);
@@ -107,13 +104,13 @@ export default class Album extends A{
 				insert_container.addEventListener('click',options_container.click.bind(options_container));
 				insert_container.appendChild(insert_img);
 				
-				let edit_container = createNode("div",{},['track-img-container']);
+				/*let edit_container = createNode("div",{},['track-img-container']);
 					let edit_img = createNode("img",{src:"./images/edit.png"},['track-img']);
 				edit_container.addEventListener('click',this.parent('onEdit'));
 				edit_container.addEventListener('click',options_container.click.bind(options_container));
-				edit_container.appendChild(edit_img);
+				edit_container.appendChild(edit_img);*/
 			hidden_container.appendChild(delete_container);
-			hidden_container.appendChild(edit_container);
+			//hidden_container.appendChild(edit_container);
 			hidden_container.appendChild(append_container);
 			hidden_container.appendChild(insert_container);
 			

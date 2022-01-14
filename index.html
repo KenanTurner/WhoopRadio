@@ -15,6 +15,7 @@
 		<script type="module" src="./js/controls.js"></script>
 		<script type="module" src="./js/upload.js"></script>
 		<script type="module" src="./js/info.js"></script>
+		<!--<script type="module" src="./js/edit.js"></script>-->
 	</head>
 	<body>
 		<div class="modal hidden" id="upload-container">
@@ -108,14 +109,44 @@
 		
 		<div class="modal hidden" id="edit-container">
 			<div class="modal-content">
-				<div class="row">
-					<label for="edit-title">Title:</label>
-					<input id="edit-title"></input>
+				<div class="hidden" id="edit-track">
+					<div class="row">
+						<label for="edit-track-title">Title:</label>
+						<input id="edit-track-title" type="text"></input>
+					</div>
+					<div class="row">
+						<label for="edit-track-src">URL:</label>
+						<input id="edit-track-src" type="url"></input>
+					</div>
+					<div class="row">
+						<label for="edit-title-filetype">Filetype:</label>
+						<select id="edit-title-filetype"></select>
+					</div>
+				</div>
+				<div class="hidden" id="edit-album">
+					<div class="row">
+						<label for="edit-album-title">Title:</label>
+						<input id="edit-album-title" type="text"></input>
+					</div>
+					<div class="row">
+						<label for="edit-album-tracks">Tracks:</label>
+					</div>
+					<div class="edit-album-tracks">
+						<div class="edit-album-track">
+							<button>
+							UP
+							</button>
+							<button>
+							Down
+							</button>
+						</div>
+					</div>
 				</div>
 				
+				
 				<div class="row bottom">
-					<button id="reset" disabled>Reset</button>
-					<button id="submit" disabled>Submit</button>
+					<button id="edit-reset" disabled>Reset</button>
+					<button id="edit-submit" disabled>Submit</button>
 				</div>
 			</div>
 		</div>

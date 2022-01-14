@@ -71,19 +71,6 @@ Track['submit'] = async function(){
 	track = new Player.Track(track);
 	album.push(track);
 }
-CustomTrack.onDelete = async function(track){
-	let album = mm.current_album;
-	if(album !== mm.queue && !window.confirm("Delete "+track.title+"?")) return;
-	album.remove(track);
-	if(album === mm.queue) return;
-	
-	let obj = await jsonPost('../php/download.php',album);
-	obj.tracks = obj.tracks.filter(function(t){
-		let tmp = new track.constructor(t);
-		return !track.equals(tmp);
-	});
-	await jsonPost('../php/upload.php',obj,null,'\t');
-}
 async function jsonPost(url,obj,replacer,space){
 	let result = await fetch(url,{
 		method: 'POST',
@@ -101,6 +88,22 @@ async function asyncFilter(arr,f){
 		if(p.status !== "rejected" && p.value) arr.push(copy[i]);
 		return arr;
 	},[]);
+}
+
+
+//################ Handle Track deletion ################
+CustomTrack.onDelete = async function(track){
+	let album = mm.current_album;
+	if(album !== mm.queue && !window.confirm("Delete "+track.title+"?")) return;
+	album.remove(track);
+	if(album === mm.queue) return;
+	
+	let obj = await jsonPost('../php/download.php',album);
+	obj.tracks = obj.tracks.filter(function(t){
+		let tmp = new track.constructor(t);
+		return !track.equals(tmp);
+	});
+	await jsonPost('../php/upload.php',obj,null,'\t');
 }
 
 export default Track;

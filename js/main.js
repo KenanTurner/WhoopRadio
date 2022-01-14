@@ -37,8 +37,10 @@ let album_container = document.getElementById('album-container');
 let album_track_container = document.getElementById('album-track-container');
 
 mm.current_album = undefined;
+mm.scroll = undefined;
 CustomAlbum.onOpen = function(album,update_history = true){
 	if(mm.current_album) mm.current_album.containers.remove();
+	if(!mm.scroll) mm.scroll = window.scrollY;
 	album_container.classList.add('hidden');
 	album_track_container.appendChild(album.toTrackContainer());
 	album_track_container.classList.remove('hidden');
@@ -88,6 +90,10 @@ function historyChange(e){
 		if(mm.current_album) mm.current_album.containers.remove();
 		album_container.classList.remove('hidden');
 		album_track_container.classList.add('hidden');
+		if(mm.scroll){
+			window.scrollTo(0, mm.scroll) //Not working :(
+			mm.scroll = undefined;
+		}
 		return mm.current_album = undefined;
 	}
 	let album = metadata.find(function(a){

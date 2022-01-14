@@ -49,8 +49,14 @@ export default class Track extends T{
 				let options_img = createNode("img",{src:"./images/options.png"},['track-img']);
 			options_container.appendChild(options_img);
 			options_container.addEventListener('click',function(){
-				hidden_container.classList.toggle('hidden');
-				options_img.src = hidden_container.classList.contains('hidden')? "./images/options.png": "./images/close.png";
+				if(hidden_container.classList.contains('hidden')){
+					options_img.src = "./images/close.png";
+					hidden_container.classList.remove('hidden');
+					setTimeout(window.addEventListener.bind(window),0,'click',function(e){
+						hidden_container.classList.add('hidden');
+						options_img.src = "./images/options.png";
+					},{once:true});
+				}
 			});
 			
 			let hidden_container = createNode("div",{},['hidden','track-options']);
@@ -72,13 +78,13 @@ export default class Track extends T{
 				insert_container.addEventListener('click',options_container.click.bind(options_container));
 				insert_container.appendChild(insert_img);
 				
-				let edit_container = createNode("div",{},['track-img-container']);
+				/*let edit_container = createNode("div",{},['track-img-container']);
 					let edit_img = createNode("img",{src:"./images/edit.png"},['track-img']);
 				edit_container.addEventListener('click',this.parent('onEdit'));
 				edit_container.addEventListener('click',options_container.click.bind(options_container));
-				edit_container.appendChild(edit_img);
+				edit_container.appendChild(edit_img);*/
 			hidden_container.appendChild(delete_container);
-			hidden_container.appendChild(edit_container);
+			//hidden_container.appendChild(edit_container);
 			hidden_container.appendChild(append_container);
 			hidden_container.appendChild(insert_container);
 			
