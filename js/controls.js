@@ -112,7 +112,7 @@ keyEvent('keyup','l',loop_btn.click.bind(shuffle_btn));*/
 mm.subscribe({type:'timeupdate',callback:function(e){
 	let time = e.status.time || 0;
 	let duration = e.status.duration || 0;
-	if(time > duration) return;
+	if(time > duration || !isFinite(duration)) return;
 	let p = 100*time/duration;
 	progress_div.style.width = String(p)+"%";
 	duration_div.style.width = String(100-p)+"%";
@@ -121,7 +121,7 @@ mm.subscribe({type:'timeupdate',callback:function(e){
 progress_container.addEventListener('click',async function(e){
 	let status = await mm.getStatus();
 	let p = e.offsetX/progress_container.offsetWidth;
-	mm.enqueue('seek',status.duration*p);
+	if(isFinite(status.duration)) mm.enqueue('seek',status.duration*p);
 });
 mm.subscribe({type:'loaded',callback:function(e){
 	current_track_title.innerText = mm.current_track.title;
