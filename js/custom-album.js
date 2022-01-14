@@ -122,7 +122,7 @@ export default class Album extends A{
 			let bg_container = createNode("div",{},['bg-img-container']);
 				let bg_img = createNode("div",{},['bg-img']);
 				if(this.artwork_url){
-					bg_img.style.backgroundImage = 'url(' + this.artwork_url + ')';
+					bg_img.style.backgroundImage = 'url("' + this.artwork_url + '")';
 				}else{
 					bg_img.style.background = '#303030';
 				}
