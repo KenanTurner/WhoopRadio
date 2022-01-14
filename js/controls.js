@@ -203,7 +203,7 @@ Album.onLoad = async function(album){
 //###################### Track onLoad ######################
 Track.onLoad = function(track){
 	mm.clear();
-	mm.enqueue(mm.queue.insertNext.bind(mm.queue),track);
+	if(!mm.queue.has(track)) mm.enqueue(mm.queue.insertNext.bind(mm.queue),track);
 	mm.enqueue('load',track);
 }
 
