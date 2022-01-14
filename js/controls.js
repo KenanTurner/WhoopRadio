@@ -177,7 +177,7 @@ if ('mediaSession' in navigator) {
 		obj.duration = e.status.duration || 0;
 		obj.position = e.status.time || 0;
 		obj.playbackRate = 1;
-		if(obj.position <= obj.duration) session.setPositionState(obj);
+		if(obj.position <= obj.duration && isFinite(obj.duration)) session.setPositionState(obj);
 	}});
 	
 }else{
