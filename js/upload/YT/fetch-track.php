@@ -13,10 +13,6 @@
     }
     
     $items = getYoutubeJson($data['id']);
-    if(empty($items) or count($items) != 1){
-        http_response_code(500);
-		exit("YT API failed!");
-    }
 	
     $track = array();
     $track['src'] = 'https://www.youtube.com/watch?v='.$data['id'];
