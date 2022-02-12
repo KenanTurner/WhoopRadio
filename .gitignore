@@ -1,6 +1,7 @@
 # Don't track content of these folders
 metadata/*
+metadata
 local/*
-scripts/*
+local
 *.ini
 *.sh
