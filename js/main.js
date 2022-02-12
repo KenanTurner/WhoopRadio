@@ -2,6 +2,7 @@ import HTML from '../MetaMusic/src/plugins/HTML/html.js';
 import YT from '../MetaMusic/src/plugins/YT/youtube.js';
 import BC from '../MetaMusic/src/plugins/BC/bandcamp.js';
 import SC from '../MetaMusic/src/plugins/SC/soundcloud.js';
+import RADIO from '../MetaMusic/src/plugins/RADIO/radio.js';
 import Queue from '../MetaMusic/src/queue.js';
 import MetaMusic from '../MetaMusic/src/meta-music.js';
 import CustomTrack from './custom-track.js';
@@ -16,12 +17,12 @@ Object.setPrototypeOf(Queue,CustomQueue); //This is poggers
 Object.setPrototypeOf(Queue.prototype,CustomQueue.prototype); //Like super poggers
 BC.proxy_url = '../MetaMusic/src/plugins/BC/bandcamp-proxy.php'; //Don't forget to fix BC proxy
 
-let imports = {Player,HTML,YT,BC,SC,MetaMusic};
+let imports = {Player,HTML,YT,BC,SC,MetaMusic,RADIO};
 function map(src,dest={},key=function(k){return k},value=function(v){return v}){for(let k in src){dest[key(k)] = value(src[k]);};return dest;}
 map(imports,window);
 console.log("Imports Loaded");
 
-MetaMusic.players = {HTML,YT,SC,BC};
+MetaMusic.players = {HTML,YT,SC,BC,RADIO};
 
 window.mm = new MetaMusic();
 mm.subscribe({type:'error',callback:function(err){

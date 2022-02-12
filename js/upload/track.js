@@ -3,11 +3,12 @@ import YT from './YT/youtube.js';
 import BC from './BC/bandcamp.js';
 import SC from './SC/soundcloud.js';
 import VGM from './VGM/vgm.js';
+import RADIO from './RADIO/radio.js';
 import CustomTrack from '../custom-track.js';
 import CustomAlbum from '../custom-album.js';
 import metadata from '../metadata.js';
 import mm from '../main.js';
-let imports = {"mp3,mp4,wav,flac":HTML,"Youtube":YT,"Bandcamp":BC,"Soundcloud":SC,"VGM link":VGM};
+let imports = {"mp3,mp4,wav,flac":HTML,"Youtube":YT,"Bandcamp":BC,"Soundcloud":SC,"VGM link":VGM,"Internet Radio":RADIO};
 
 let Track = {};
 let track_div = document.getElementById("upload-track");
