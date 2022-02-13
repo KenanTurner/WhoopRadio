@@ -27,5 +27,6 @@ export default class AsyncQueue{
 	}
 	async clear(){
 		this.queue.length = 0;
+		this.concurrent_promises = 0;
 	}
 }
