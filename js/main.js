@@ -1,7 +1,7 @@
 import HTML from '../MetaMusic/src/plugins/HTML/html.js';
-import YT from '../MetaMusic/src/plugins/YT/youtube.js';
-import BC from '../MetaMusic/src/plugins/BC/bandcamp.js';
-import SC from '../MetaMusic/src/plugins/SC/soundcloud.js';
+import YT from '../MetaMusic/src/plugins/YT-DL/YT/youtube.js'; //Use YT-DL variants
+import BC from '../MetaMusic/src/plugins/YT-DL/BC/bandcamp.js';
+import SC from '../MetaMusic/src/plugins/YT-DL/SC/soundcloud.js';
 import RADIO from '../MetaMusic/src/plugins/RADIO/radio.js';
 import Queue from '../MetaMusic/src/queue.js';
 import MetaMusic from '../MetaMusic/src/meta-music.js';
@@ -9,13 +9,16 @@ import CustomTrack from './custom-track.js';
 import CustomAlbum from './custom-album.js';
 import CustomQueue from './custom-queue.js';
 let Player = Object.getPrototypeOf(MetaMusic);
+let YTDL = Object.getPrototypeOf(YT||BC||SC);
 
 //Inject the Custom class into the prototype chain
 Object.setPrototypeOf(Player.Track,CustomTrack); //This is poggers
 Object.setPrototypeOf(Player.Track.prototype,CustomTrack.prototype); //Like super poggers
 Object.setPrototypeOf(Queue,CustomQueue); //This is poggers
 Object.setPrototypeOf(Queue.prototype,CustomQueue.prototype); //Like super poggers
-BC.proxy_url = '../MetaMusic/src/plugins/BC/bandcamp-proxy.php'; //Don't forget to fix BC proxy
+
+//BC.proxy_url = '../MetaMusic/src/plugins/BC/bandcamp-proxy.php'; //Don't forget to fix BC proxy
+YTDL.proxy_url = '/MetaMusic'+YTDL.proxy_url;
 
 let imports = {Player,HTML,YT,BC,SC,MetaMusic,RADIO};
 function map(src,dest={},key=function(k){return k},value=function(v){return v}){for(let k in src){dest[key(k)] = value(src[k]);};return dest;}
