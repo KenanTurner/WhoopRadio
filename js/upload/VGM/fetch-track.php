@@ -16,8 +16,10 @@
 	
 	$xpath = new DOMXPath($doc);
 	$results = $xpath->query("//*[@class='songDownloadLink']/..");
+	$track['sources'] = array();
 	foreach ($results as $result) {
 		//echo $result->getAttribute('href');
+		array_push($track['sources'],$result->getAttribute('href'));
 		$track['src'] = $result->getAttribute('href');
 	}
 	
