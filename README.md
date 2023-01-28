@@ -1,3 +1,5 @@
+# Development has moved to [WhoopRadioDesktop](https://github.com/KenanTurner/WhoopRadioDesktop)
+
 # WhoopRadio
 
 A simple music streaming website powered by [MetaMusic!](https://github.com/KenanTurner/MetaMusic)
